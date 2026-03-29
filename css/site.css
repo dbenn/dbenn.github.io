@@ -1,0 +1,84 @@
+/* Global styles — start with home page; extend as you modernize other pages. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0 auto;
+  max-width: 50rem;
+  padding: 1rem 1.25rem 2rem;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.45;
+  color: #111;
+  background: #fff;
+}
+
+body.home h1,
+body.home .site-title {
+  font-size: 1.5rem;
+  font-weight: normal;
+  font-style: italic;
+  color: #ff0000;
+  text-align: center;
+  margin: 0.5rem 0 1rem;
+}
+
+a:link {
+  color: #00e;
+}
+
+a:visited {
+  color: #551a8b;
+}
+
+a:hover,
+a:focus {
+  text-decoration: underline;
+}
+
+a:focus-visible {
+  outline: 2px solid #06c;
+  outline-offset: 2px;
+}
+
+.font-large {
+  font-size: 1.0625rem;
+}
+
+.host-caption {
+  color: #483d8b;
+  font-size: 0.875rem;
+}
+
+.last-mod {
+  color: #c00;
+}
+
+.last-mod time {
+  font-style: normal;
+}
+
+/* Layout tables: allow stacking on small screens */
+@media (max-width: 36rem) {
+  body.home table[width="42%"],
+  body.home table[width="42%"] td {
+    width: 100% !important;
+  }
+
+  body.home center > table tr {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  body.home center > table td {
+    display: block;
+    text-align: left !important;
+  }
+}
