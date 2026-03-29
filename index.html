@@ -1,144 +1,73 @@
-<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
-<html>
-<head
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="Author" content="David Benn">
-   <meta name="GENERATOR" content="Mozilla/4.5 [en] (Win95; I) [Netscape]">
-   <meta name="description" content="Freeware ACE Amiga BASIC Compiler">
-   <meta name="keywords" content="ACE BASIC Compiler LittleLisp Newton JavaScript JScript ECMAScript Java Astronomy Conceptual Graphs pCG">
-   <meta name="author-email" content="dbenn@computer.org">
-   <title>David Benn's Home Page</title>
-<script language="JavaScript">
-   // Ensure a value less than 10 is prefixed with "0".
-   //
-   function PrefixValueLessThanTen(value)
-   {
-    if (value < 10) value = "0" + value;
-    return value;
-   }
-
-   // Format a Date object as a string in a browser/locale independent way
-   // (day-name month-name day-of-month year hours:minutes:seconds). Note
-   // that getYear() is _not_ Y2K-compliant so compensate!
-   //
-   function FormatDateAndTime(d)
-   {
-    dayNames = new Array("Sunday","Monday","Tuesday","Wednesday",
-                 "Thursday","Friday","Saturday");
-
-    monthNames = new Array("January","February","March","April","May",
-                   "June","July","August","September","October",
-                   "November","December");
-
-    hours = PrefixValueLessThanTen(d.getHours());
-    minutes = PrefixValueLessThanTen(d.getMinutes());
-    seconds = PrefixValueLessThanTen(d.getSeconds());
-    year = d.getYear() + 1900;
-    if (year < 1999) year += 100; // compensate for Y2K non-compliance
-        
-    return  dayNames[d.getDay()] + " " + 
-        monthNames[d.getMonth()] + " " +
-        d.getDate() + " " +
-        year + " " +            
-        hours+":"+minutes+":"+seconds;
-   }
- </script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Author" content="David Benn">
+  <meta name="description" content="Freeware ACE Amiga BASIC Compiler">
+  <meta name="keywords" content="ACE BASIC Compiler LittleLisp Newton JavaScript JScript ECMAScript Java Astronomy Conceptual Graphs pCG">
+  <meta name="author-email" content="dbenn@computer.org">
+  <title>David Benn's Home Page</title>
+  <link rel="stylesheet" href="css/site.css">
 </head>
+<body class="home">
 
-<!--
-<body background="images/bgrounds/pinkplas.jpg">
-
-<body class="both">
--->
-
-<body>
-
-<dl>
-<center>
-<h2>
-<i><font face="Arial,Helvetica"><font color="#FF0000">David Benn's Home
-Page</font></font></i></h2></center>
-</dl>
+<h1 class="site-title">David Benn's Home Page</h1>
 
 <center>
-<table BORDER=0 COLS=1 WIDTH="42%" >
+<table border="0" cols="1" width="42%">
 <tr>
 <td align="left">
 <ul>
-<li>
-<font size=+1><a href="docs/projects.html">Projects</a></font></li>
+<li class="font-large"><a href="docs/projects.html">Projects</a></li>
 
 <!img src="icons/new.gif">
 
 <ul>
-<li>
-<font size=+1><a href="docs/projects.html#vstar">VStar</a></font></li>
+<li class="font-large"><a href="docs/projects.html#vstar">VStar</a></li>
 
+<li class="font-large"><a href="docs/projects.html#picclib">PIC C Library</a></li>
 
-<li>
-<font size=+1><a href="docs/projects.html#picclib">PIC C Library</a></font></li>
+<li class="font-large"><a href="docs/projects.html#ecmascript">ECMAScript</a> experiments</li>
 
-<li>
-<font size=+1><a href="docs/projects.html#ecmascript">ECMAScript</a> experiments</font></li>
+<li class="font-large"><a href="docs/projects.html#littlelisp">LittleLisp</a> (Newton)</li>
 
-<li>
-<font size=+1><a href="docs/projects.html#littlelisp">LittleLisp</a> (Newton)</font>
-</li>
-
-<li>
-<font size=+1><a href="docs/projects.html#ace">ACE</a> BASIC (Amiga)</font></li>
+<li class="font-large"><a href="docs/projects.html#ace">ACE</a> BASIC (Amiga)</li>
 </ul>
 
-<li>
-<font size=+1><a href="Masters/index.html">Master's</a> work</font>
-</li>
+<li class="font-large"><a href="Masters/index.html">Master's</a> work</li>
 
-<li>
-<font size=+1><a href="docs/pubs.html">Publications</a></font>
+<li class="font-large"><a href="docs/pubs.html">Publications</a></li>
 
-<li>
-<font size=+1>Astronomy</font></li>
+<li class="font-large">Astronomy</li>
 
 <ul>
-<li>
-<font size=+1><a href="Astronomy/meade_lpi.html">Meade LPI images</a></font></li>
+<li class="font-large"><a href="Astronomy/meade_lpi.html">Meade LPI images</a></li>
 
-<li>
-<font size=+1>Saga of a <a href="Astronomy/tasco11T.html">Tasco 11T</a></font></li>
+<li class="font-large">Saga of a <a href="Astronomy/tasco11T.html">Tasco 11T</a></li>
 
-<li>
-<font size=+1><a href="Astronomy/comet.html">Comet</a> pictures</font></li>
+<li class="font-large"><a href="Astronomy/comet.html">Comet</a> pictures</li>
 
-<li>
-<font size=+1><a href="Astronomy/astropages.html">Links</a></font></li>
+<li class="font-large"><a href="Astronomy/astropages.html">Links</a></li>
 </ul>
 
-<li>
-<font size=+1><a href="docs/music.html">Music</a> interests and links</font></li>
+<li class="font-large"><a href="docs/music.html">Music</a> interests and links</li>
 
-<li>
-<font size=+1>Programming <a href="docs/plquotes.html">quotes</a></font></li>
+<li class="font-large">Programming <a href="docs/plquotes.html">quotes</a></li>
 
-<li>
-<font size=+1><a href="docs/webpages.html">Pages</a> I like to visit</font></li>
+<li class="font-large"><a href="docs/webpages.html">Pages</a> I like to visit</li>
 
-<li>
-<font size=+1><a href="docs/search.html">Search Engines and Information</a></font></li>
+<li class="font-large"><a href="docs/search.html">Search Engines and Information</a></li>
 
-<li>
-<font size=+1><a href="docs/nicholas.html">Nicholas's page</a></font></li>
+<li class="font-large"><a href="docs/nicholas.html">Nicholas's page</a></li>
 
-<li>
-<font size=+1><a href="docs/heather.html">Heather's page</a></font></li>
+<li class="font-large"><a href="docs/heather.html">Heather's page</a></li>
 
-<li>
-<font size=+1><a href="docs/CV.pdf">Curriculum Vitae</a></font></li>
+<li class="font-large"><a href="docs/CV.pdf">Curriculum Vitae</a></li>
 
-<li>
-<font size=+1>About <a href="docs/about_author.html">me</a>...</font></li>
+<li class="font-large">About <a href="docs/about_author.html">me</a>...</li>
 
-<li>
-<font size=+1><a href="http://dbenn.wordpress.com">Strange Quark's (my blog)</a></font></li>
+<li class="font-large"><a href="https://dbenn.wordpress.com">Strange Quark's (my blog)</a></li>
 
 </ul>
 </td>
@@ -151,42 +80,52 @@ google_ad_width = 120;
 google_ad_height = 240;
 //-->
 </script>
-<script type="text/javascript"
-src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script>
+<script type="text/javascript" src="https://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
 </td>
 </tr>
 </table>
 </center>
 
-<center><table BORDER=0 CELLSPACING=0 >
+<center><table border="0" cellspacing="0">
 <tr>
 <td>
 <table>
 <tr>
-<td ALIGN=CENTER><a href="http://www.users.on.net/"><img SRC="icons/HomeBut.GIF"  align=CENTER></a></td>
+<td align="center"><a href="index.html"><img src="icons/HomeBut.GIF" align="center" alt="Home"></a></td>
 </tr>
 
 <tr>
-<td ALIGN=CENTER><font color="#483D8B"><font size=-1>Internode</font></font></td>
+<td align="center" class="host-caption">Home</td>
 </tr>
 </table>
 </td>
 
-<td><font color="#FF0000">Last modified by <a href="mailto:dbenn@computer.org">David Benn</a></font>
-   <script language="JavaScript"> 
-     // Show date of last modification of this page.
-     //
-     millisecs = Date.parse(document.lastModified);
-     document.write(FormatDateAndTime(new Date(millisecs)));
-   </script>
+<td class="last-mod">Last modified by <a href="mailto:dbenn@computer.org">David Benn</a>
+  <time id="last-modified"></time>
 </td>
 </tr>
 </table></center>
 
+<script>
+(function () {
+  function formatEnUtcStyle(d) {
+    var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+    return days[d.getDay()] + ' ' +
+      months[d.getMonth()] + ' ' +
+      d.getDate() + ' ' +
+      d.getFullYear() + ' ' +
+      pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+  }
+
+  var el = document.getElementById('last-modified');
+  if (!el) return;
+  var ms = Date.parse(document.lastModified);
+  if (!isFinite(ms)) return;
+  el.textContent = ' ' + formatEnUtcStyle(new Date(ms));
+})();
+</script>
+
 </body>
 </html>
-
-
-
-
