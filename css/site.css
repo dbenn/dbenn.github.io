@@ -64,6 +64,31 @@ a:focus-visible {
   font-style: normal;
 }
 
+/* Photo gallery (about page, etc.) */
+.photo-gallery {
+  margin: 1.5rem 0;
+}
+
+.photo-gallery figure {
+  margin: 0 0 2rem;
+  padding: 0;
+}
+
+.photo-gallery img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  width: 16rem;
+}
+
+.photo-gallery figcaption {
+  margin-top: 0.35rem;
+  font-style: italic;
+  font-size: 0.9375rem;
+  color: #444;
+  max-width: 16rem;
+}
+
 /* Layout tables: allow stacking on small screens */
 @media (max-width: 36rem) {
   body.home table[width="42%"],
