@@ -1,0 +1,78 @@
+Date: Sun, 19 Sep 1999 21:44 -0400
+From: Mark Zimmermann <z@his.com>
+To: Little Lisp <LittleLisp@onelist.com>
+X-Mailer: SimpleMail/3.2.5d1
+Mailing-List: list LittleLisp@onelist.com; contact LittleLisp-owner@onelist.com
+Delivered-To: mailing list LittleLisp@onelist.com
+List-Unsubscribe: <mailto:LittleLisp-unsubscribe@ONElist.com>
+Reply-to: LittleLisp@onelist.com
+Subject: [LittleLisp] LittleLisp code sample --- triangular partitions (simple way)
+X-Rcpt-To: <dbenn@camtech.net.au>
+X-DPOP: DPOP Version 2.5g
+
+From: Mark Zimmermann <z@his.com>
+
+Hi all! --- below is a 10 February 1999 extraordinarily simple LittleLisp 
+program to compute the partitions of integers into three (or fewer) 
+triangular numbers.  It's inefficient as all get-out (don't try running it 
+on anything bigger than 20 or 30 please) and in a few days I'll post a much 
+faster (and more complex) algorithm to do the same thing (I need to check 
+the code and retest it first, and it's much less readable ... hence, the 
+slight delay).
+
+To explain:  for some time I've been scratching my head trying to figure out 
+why any positive integer can be expressed as the sum of three or fewer 
+triangular numbers.  ((Triangular numbers are integers like 1, 3, 6, 10, 15, 
+21, .... --- of the form N*(N+1)/2 --- so-called because that many dots can 
+be arranged into a nice triangle, e.g., 10 bowling pins or 15 pocket billiard 
+balls.))
+
+Anyway, Gauss et al. proved it, and since I haven't been able to understand 
+how, I started gathering data on the ways to partition numbers into the sum 
+of three triangles.  The following code defines functions to compute the Nth 
+triangular number as above; the sum of three such triangular numbers for a
+triple i, j, k; and the partitions of N into such sums by looping 
+(recursively) over all i, j, k counting up through the candidate possibilities.
+
+To run the code, copy/paste it into its own folder in Notes on the Newton, 
+LOAD in LittleLisp, and then EVAL, for example, (tp 13) to see ((in ~15 
+seconds on the eMate 300)) that 13 = 1+6+6 = 0 + 3 + 10.  ((It's simplest to 
+treat zero as a triangular number and show it explicitly for sums that don't 
+need three positive triangular numbers.))
+
+;; triangle partition, simpleminded method --- ^z --- 1999.02.10
+
+(defun tri (i)
+	(* 0.5 i (+ i 1)))
+
+(defun trisum (i j k)
+	(+ (tri i) (tri j) (tri k)))
+
+(defun consans (i j k ans)
+	(cons (list (tri i) (tri j) (tri k)) ans))
+
+(defun tripartition (n i j k ans)
+	(cond ((= n (trisum i j k))
+			(tripartition n i (+ j 1) (+ j 1) (consans i j k ans)))
+		((> n (trisum i j k))
+			(tripartition n i j (+ k 1) ans))
+		(t (cond ((= i k) ans)
+			((= j k) (tripartition n (+ i 1) (+ i 1) (+ i 1) ans))
+ 			(t (tripartition n i (+ j 1) (+ j 1) ans))))))
+
+(defun tp (n)
+	(tripartition n 0 0 0 ()))
+
+;;; ^z
+
+Best,
+    ^z = Mark Zimmermann = z@his.com = http://www.his.com/~z/
+             ^zhurnal = http://www.his.com/~z/guestbook/
+
+--------------------------- ONElist Sponsor ----------------------------
+
+Does Windows keep ""bugging"" you?  Can't get that PowerPoint slide to fit?
+Get FREE real-time live expert support over the Internet at expertcity.com.  
+         <a href=" http://clickme.onelist.com/ad/expertcity7 ">Click Here</a>
+
+------------------------------------------------------------------------

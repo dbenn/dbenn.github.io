@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Surface Brightness Calculator</title>
+
+      <script language = "JavaScript">
+        <!-- Hide the code from non-compliant browsers.
+
+        function circularSB(form) {
+            var radius = form.diameter.value / 2;
+            var area = Math.PI * radius * radius;
+            surfaceBrightness(area, form);
+        }
+
+        function ellipticalSB(form) {
+            var area = Math.PI * (form.major.value / 2 * form.minor.value / 2);
+            surfaceBrightness(area, form);
+        }
+
+        function rectangularSB(form) {
+            var area = form.length.value * form.width.value;
+            surfaceBrightness(area, form);
+        }
+
+        function surfaceBrightness(area, form) {
+            form.result.value = 
+                parseFloat(form.mag.value) + (2.5 * log10(area));
+        }
+ 
+        function log10(n) {
+          return Math.log(n) / Math.log(10);
+        }
+        // -->
+      </script>
+
+  </head>
+
+  <body>
+    <h2>Surface Brightness Calculator</h2>
+
+    This page captures the object surface brightness calculations discussed in
+    Martin Lewiki's May 2005 <a href="http://www.assa.org.au">ASSA</a> Bulletin 
+    article.
+ 
+    <p>
+    <h3>Circular Object</h3>
+
+    <form name="circularForm">
+      <table bgcolor="steelblue">
+        <tr>
+          <td>Magnitude:
+              <input type="text" name="mag" value="" size=7></td>
+          <td>Diameter (arc minutes):
+              <input type="text" name="diameter" value="" size=7></td>
+          <td><input type="button" value="Calculate "
+	         onClick="circularSB(document.circularForm)"></td>
+        </tr>
+        <tr><td><br/></td></tr>
+        <tr>
+          <td>Surface Brightness:</td>
+          <td><input type="text" name="result" value="" size=7></td>
+        </tr>
+      </table>
+    </form>
+    </p>
+
+    <br/>
+
+    <p>
+    <h3>Elliptical Object</h3>
+
+    <form name="ellipticalForm">
+      <table bgcolor="slategray">
+        <tr>
+          <td>Magnitude:
+              <input type="text" name="mag" value="" size=7></td>
+          <td>Major axis (arc minutes):
+              <input type="text" name="major" value="" size=7></td>
+          <td>Minor axis (arc minutes):
+              <input type="text" name="minor" value="" size=7></td>
+          <td><input type="button" value="Calculate "
+	         onClick="ellipticalSB(document.ellipticalForm)"></td>
+        </tr>
+        <tr><td><br/></td></tr>
+        <tr>
+          <td>Surface Brightness:</td>
+          <td><input type="text" name="result" value="" size=7></td>
+        </tr>
+      </table>
+    </form>
+    </p>
+
+    <br/>
+
+    <p>
+    <h3>Rectangular Object</h3>
+
+    <form name="rectangularForm">
+      <table bgcolor="tan">
+        <tr>
+          <td>Magnitude:
+              <input type="text" name="mag" value="" size=7></td>
+          <td>Length (arc minutes):
+              <input type="text" name="length" value="" size=7></td>
+          <td>Width (arc minutes):
+              <input type="text" name="width" value="" size=7></td>
+          <td><input type="button" value="Calculate "
+	         onClick="rectangularSB(document.rectangularForm)"></td>
+        </tr>
+        <tr><td><br/></td></tr>
+        <tr>
+          <td>Surface Brightness:</td>
+          <td><input type="text" name="result" value="" size=7></td>
+        </tr>
+      </table>
+    </form>
+    </p>
+
+    <hr>
+    <address><a href="mailto:dbenn@computer.org"></a></address>
+<!-- Created: Wed Jun 08 13:18:43 Cen. Australia Standard Time 2005 -->
+<!-- hhmts start -->
+Last modified: Thu Jun 16 21:59:52 Cen. Australia Standard Time 2005
+<!-- hhmts end -->
+    <hr>
+    <A HREF="../index.html"><IMG SRC="../icons/HomeBut.GIF"></a> 
+  </body>
+</html>

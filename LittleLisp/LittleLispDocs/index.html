@@ -1,0 +1,955 @@
+<html>
+ <head>
+  <title>LittleLisp version 1.01</title>
+ </head>
+ <body bgcolor=white>
+
+  <HR>
+  <CENTER>
+  <table>
+   <td align="left">
+    <img src="gfx/sparks.gif">
+   </td>
+   <td align="right">
+    This site is part of the<br><font size=+1>Apple Newton Web Ring</font>.
+    <br>Click on the icon to go to another<BR>Apple Newton Web Site<BR>
+    <A HREF="http://www.webring.org/cgi-bin/webring?random&ring=newtonring" target="_parent">
+    <!IMG SRC="http://pobox.com/~bnet/newton/webring.gif" height=50 width=56 border=0 alt="Newton Web Ring">
+    <IMG SRC="gfx/webring.gif" height=50 width=56 border=0 alt="Newton Web Ring"></A><BR>
+    <A HREF="http://www.webring.org/cgi-bin/webring?home&ring=newtonring" target="_parent">
+    Add your Newton Site to the Web Ring!</A>
+   </td>
+  </table>
+  </CENTER>
+  <HR>
+
+  <table>
+   <td align="left">
+    <h1>LittleLisp version 1.01</h1>
+    <h4>Copyright &#169 David Benn 1998-2000</h4>
+   </td>
+   <td align="center">
+    <img src="gfx/lambda.gif">
+   </td>
+   <td align="right">
+    <img src="gfx/newtonroger.gif">
+   </td>
+  </table>
+
+  <hr>
+  <a name="contents">
+  <h2>Contents</h2>
+  <ul>
+    <li><a href="#what_is">What is LittleLisp?</a></li>
+    <li><a href="#why">Why was LittleLisp developed?</a></li>
+    <li><a href="#getting">Getting LittleLisp</a></li>
+    <li><a href="#mailing_list">Mailing List</a></li>
+    <li><a href="#interface">Interface</a></li>
+    <li><a href="#special_forms">Special Forms</a></li>
+    <li><a href="#functions">Built-in Functions</a></li>
+    <li><a href="#examples">Examples</a></li>
+    <li><a href="#disclaimer">Disclaimer</a></li>
+    <li><a href="#references">References and Further Reading</a></li>
+    <li><a href="#history">Revision History</a></li>
+    <li><a href="#final_word">Final Word</a></li>
+  </ul>
+
+  <hr>
+  <a name="what_is">
+  <h2>What is LittleLisp?</h2>
+  <p>LittleLisp is a Lisp interpreter for the Newton PDA that I have been 
+  developing on and off since late 1996 in my limited spare time. It requires
+  NewtOS 2.0 or higher and was developed under Windows 95 with NTK 1.6.1
+  tethered to a MessagePad 130 running NewtOS 2.0. The language includes 
+  graphics extensions and the ability to invoke NewtonScript functions.</p>
+
+  <p>Currently,
+  lists, real numbers, symbols (atoms), and strings are supported.
+  There is a function for creating frames but they are not yet first 
+  class values. Dotted pairs are not supported.</p>
+
+  <p>LittleLisp is a lexically scoped Lisp dialect with higher order
+  functions which has been influenced by Scheme, Common Lisp, and
+  <a href="http://www.aracnet.com/~tomalmy/xlisp.html">XLisp-Plus</a>. 
+  I have yet to make up my mind as to whether I should convert it to 
+  LittleScheme or even LittleCommonLisp (probably a contradiction in terms). 
+  A modern dialect of APL, J, also influenced me, hence the REPEAT special 
+  form and SEQ function (see <a href="#special_forms">Special Forms</a> and 
+  <a href="#functions">Built-in Functions</a>).</p>
+  
+  <p>The name "LittleLisp" derives from at least 3 sources:
+     <ul>
+      <li>Friedman and Felleisen's <a href="#references">
+      <em>The Little Lisper</em></a></li>
+      <li>It's a <em>little</em> implementation</li>
+      <li>The Newton is a <em>little</em> machine.</li>
+     </ul></p>
+
+  <p><a href="#contents">Contents</a></p>
+
+  <hr>
+  <a name="why">
+  <h2>Why was LittleLisp developed?</h2>  
+  <p>I spend too much time at desktop computers but I love to program, so 
+  I thought it would be great to be able to sit under a tree or on a sofa 
+  (with <em>The Little Lisper</em> :) and fool 
+  around with some recreational programming. I've become increasingly 
+  interested in functional and alternate paradigms in recent years and
+  I've always wanted to write a Lisp system. It was a great way to learn 
+  NewtonScript, not to mention the obvious semantic similarities between 
+  Lisp and NewtonScript. I also thought that another programming language 
+  for the Newton wouldn't hurt, so in the spirit of Newt and NS BASIC, 
+  LittleLisp was born. J.K. Millen wrote a Lisp interpreter for the Newton 
+  around 1994 which looks good, but LittleLisp is less minimalistic. 
+  I have tried to include a useful set of functions and special forms, 
+  providing an interface to NewtonScript for less commonly used functions.</p>
+
+  <p><a href="#contents">Contents</a></p>
+
+  <hr>
+  <a name="getting">
+  <h2>Getting LittleLisp</h2>  
+  <p>You need to download the LittleLisp package and optionally this 
+  documentation (in HTML or Newton Book formats) for offline browsing. Both
+  are available as Zip and Stuffit archives. In addition, the raw LittleLisp 
+  and book package files are provided for download if your platform can't 
+  handle the archives.</p>
+
+  <p>
+  <ul>
+   <li>Download the complete LittleLisp Windows NTK 1.6.1 source files (including exported text) as a <A HREF="../LittleLisp1.01.zip">Zip archive</a>.</li> 
+   <p>
+   <li>Download the LittleLisp package as a <a href="../LittleLisp.zip">Zip archive</a>.</li>
+   <li>Download the LittleLisp package as a <a href="../LittleLisp.pkg">package file</a>.</li>
+   <p>
+   <li>Download the docs in Newton Book format as a <a href="../LittleLispBook.zip">Zip archive</a>.</li>
+   <li>Download the docs in Newton Book format as a <a href="../LLisp1.01-1X0.PKG">package file, formatted for MP 120/130</a>.</li>
+   <li>Download the docs in Newton Book format as a <a href="../LLisp1.01-2K.PKG">package file, formatted for MP 2000</a>.</li>
+   <li>Download the docs in Newton Book format as a <a href="../LLisp1.01-eM.PKG">package file, formatted for eMate</a>.</li>
+   <p>
+   <li>Download the docs in HTML format as a <a href="http://www.adelaide.net.au/~dbenn/LittleLisp/LittleLispDocs.zip">Zip archive</a>.</li>
+  </ul>
+  </p>
+
+  <p><a href="mailto:djbenn@ozemail.com.au">Let me know</a> if you have 
+  download problems.</p>
+
+  <p>LittleLisp 1.01 is freeware.</p>
+
+  <p><a href="#contents">Contents</a></p>
+
+  <hr>
+  <a name="mailing_list">
+  <h2>Mailing List</h2>
+  <p>A LittleLisp mailing list was created on August 28 1999. This mailing 
+  list exists for the purpose of disseminating information about LittleLisp.
+  You'll find out about new versions here first.</p>
+
+  <p>The list is intended to be a forum to which you can send bug reports, 
+  comments, or example LittleLisp code, ask questions and basically talk 
+  about any aspect of LittleLisp.</p>
+
+  <center>
+   <a href="http://www.onelist.com/subscribe/LittleLisp">
+   <img src="gfx/joinList.gif" height=36 width=72>
+   <br>
+   Click to subscribe to LittleLisp
+   </a>
+  </center>
+
+  <p><a href="#contents">Contents</a></p>
+
+  <hr>
+  <a name="interface">
+  <h2>Interface</h2>  
+  <p>LittleLisp's interface consists of an input area at the top, 
+  several popup menus on the lower left, and various buttons on
+  the lower right. When output is required (corresponding to the PRINT in
+  Lisp's READ-EVAL-PRINT loop (REPL)) a slip opens to display it. This is 
+  scrollable
+  via the Newton's scroll arrows. When graphics output is required, another 
+  slip opens. Note that there is no support yet for a rotated screen. Apart 
+  from this, please let me know if there is a problem with what you see on 
+  your Newton, or if you have suggestions for improving the interface. See
+  also some <a href="#final_word">possible improvements</a> in <em>Final
+  Word</em>.</p>
+  
+  <p>The menus are: Symbol Bindings - which is dynamically updated with
+  function and variable definitions, Useful Constants, Graphics, Numeric, 
+  String, General, and Special Forms.</p>
+
+  <p>There is a Clear button which clears the input area, a Print? checkbox
+  which turns output slip opening on or off (useful if your program is
+  doing graphics), an Eval button which evaluates the expression(s) in the
+  input area and produces some sort of output. Note that if a program
+  generates an error, the output slip will open irrespective of Print?'s
+  setting. If you don't close the output slip between evaluations, future
+  evaluations are appended.</p>
+
+  <p>The Load button pops up a menu of Note files from which you can select. 
+  When one is selected, all the code (hopefully) in that note file is 
+  evaluated. The Store button stores the input area's content as a note in 
+  the specified file. The Notes button launches the Notes application.</p>
+
+  <p>The Break? checkbox is used to specify whether a progress slip with
+  a stop button should be invoked during evaluation. Note that during a 
+  Load operation (see above), such a slip is always invoked.</p>
+
+  <p>There are convenience buttons for <code>( ) ' "</code>. The 
+  <code>]</code> button balances parentheses 
+  to the <em>end</em> of the input area. There is also a button which creates
+  a new line and moves the input point to it, indenting according to the
+  number of open parentheses. The <code>;</code> character introduces 
+  a one-line comment. The <code>#</code> character introduces the 
+  NewtonScript function 
+  prefix (e.g. <code>(#Atan n)</code> would apply the NewtonScript function
+  <code>Atan</code> to <code>n</code>. There is an on-screen keyboard 
+  button and LittleLisp will of course accept input from an attached keyboard.
+  Also, don't feel constrained by the ASCII character set. You can use any
+  valid Unicode character as long as you can input it! (e.g. click the 
+  <em>option</em> key on the on-screen QWERTY keyboard).
+  </p>
+
+  <p>Here's what LittleLisp looks like:</p>
+
+  <center>
+  <table>
+    <tr>     
+      <td align="left">
+        <img src="screenshots/treecode.gif">        
+      </td>
+      <td align="center">
+        <img src="gfx/rightArrow.gif">        
+      </td>
+      <td align="right">
+        <img src="screenshots/treegfx.gif">        
+      </td>
+    </tr>
+  </table>
+  </center>
+
+  <p>These screen shots show a function definition and the result of
+  that function's application to 20.</p>
+
+  <p><a href="#contents">Contents</a></p>
+
+  <hr>
+  <a name="special_forms">
+  <h2>Special Forms</h2>  
+  <p>Here is a list and brief description of each special form. Some knowledge 
+  of <a href="#references">Lisp</a> is assumed. Note that the case of Lisp 
+  symbols is immaterial.</p>
+
+<p><code>(and expr1 ... exprN)</code>
+<br><em>Return</em> <code>nil</code> <em>upon encountering the first expression which evaluates to</em> <code>nil</code> <em>, otherwise return the final 
+value. Expressions are evaluated and tested from left to right.</em>
+
+<p><code>(begin expr1 ... exprN)</code>
+<br><em>Evaluate each expression in turn, returning the last.</em>
+
+<p><code>(cond (expr1 [expr2]) (expr3 [expr4]) ...)</code>
+<br><em>One or more lists each containing one or two expressions are expected.
+The first expression in each list is evaluated and if 
+non-</em><code>nil</code>,<em> 
+the second expression (or the first if only one is present) is evaluated and 
+returned.</em> <code>nil</code> <em>is returned if no lists are supplied or 
+if no first expression evaluates to non-</em><code>nil</code><em>. If there 
+are either zero or more than two expressions in a cond clause, an error is 
+generated.</em>
+
+<p><code>(defun name ([formal-arglist]) expr1 [expr2 ...])</code>
+<br><em>Create a named function. This is syntactic sugar for</em>
+<code>(setq name (lambda ...))</code>
+
+<p><code>(error object)</code>
+<br><em>Abort the current read-eval-print loop with an error message. Results prior to this are also output. I have categorised this as a special form since it changes the flow of control.</em>
+
+<p><code>(frame ((symbol1 expr1) (symbol2 expr2) ...))</code>
+<br><em>Construct a NewtonScript frame instance from a list of bindings. There is currently no other support for frames.</em>
+
+<p><code>(if condition expr1 expr2)</code>
+<br><em>Return</em> <code>expr1</code> <em>if</em> <code>condition</code> 
+<em>is true (non-</em><code>nil</code><em>) otherwise</em> <code>nil</code> 
+<em>or</em> <code>expr2</code> <em>if present. If</em> <code>condition</code> 
+<em>is false and </em><code>expr2</code> <em>is absent,</em> <code>nil</code> 
+<em>is returned.
+Only one of</em> <code>expr1</code> <em>or</em> <code>expr2</code> <em>is 
+evaluated. The only differences in Scheme are that</em> <code>#f</code> 
+<em>represents false, rather than</em> <code>nil</code><em>, and in the
+case where</em> <code>condition</code> <em> is false and</em>
+<code>expr2</code> <em>is absent, the return value is undefined.</em>
+
+<p><code>(lambda ([formal-arglist]) expr1 [expr2 ...])</code>
+<br><em>Create an anonymous function/closure. This can be applied immediately
+or bound to a name via</em> <code>setq</code><em>, a function parameter, 
+or</em> <code>let*</code><em>.</em>
+
+<p><code>(let* ((symbol1 expr1) (symbol2 expr2) ...) expr3 [expr4 ...])</code>
+<br><em>This is the same as Scheme's lexical binding</em> <code>let*</code><em> special form. Symbols are bound from left to right and the scope of a binding is the portion of the</em> <code>let*</code><em> expression to the right of that binding. The expressions after the binding pairs are evaluated from left to right and the final value is returned.</em>
+
+<p><code>(or expr1 ... exprN)</code>
+<br><em>Return the first non-</em><code>nil</code> <em>value, otherwise 
+</em> <code>nil</code> <em>. Expressions are evaluated and tested from left 
+to right.</em>
+
+<p><code>(quote expr)</code>
+<br><em>Return expr unevaluated.</em>
+<code>'expr</code> <em>is equivalent, and is converted during the read
+stage of the REPL to</em> <code>(quote expr)</code>. <em>If you have code 
+which constructs code involving this form, use</em> <code>quote</code><em>, 
+not</em> <code>'</code>.
+
+<p><code>(repeat N expr)</code>
+<br><em>Evaluate expression N times and return the result as an N-element list.
+</em>
+
+<p><code>(setq symbol expr)</code>
+<br><em>Bind an expression to a global or local (function parameter or 
+</em> <code>let*</code><em> binding) variable.</em>
+
+<p><code>(while cond-expr expr1 ... exprN)</code>
+<br><em>Evaluate each expression (1..N) from left to right while the 
+conditional expression is non-</em><code>nil</code><em>.</em>
+
+  <p><a href="#contents">Contents</a></p>
+
+  <hr>
+  <a name="functions">
+  <h2>Built-in Functions</h2>  
+  <p>Here is a list and brief description of each function. 
+  Some knowledge of <a href="#references">Lisp</a> is assumed.  Note that 
+  the case of Lisp symbols is immaterial.</p>
+
+<p><b>General primitives.</b>
+<br><code>(append [list1 ... listN])</code>
+<br><em>The contents of each list are appended together to form a new 
+list. If no arguments are supplied, </em><code>nil</code> <em> is
+returned.</em>
+
+<p><code>(apply func arg-list)</code>
+<br><em>Apply the function to the argument list. Function symbols may optionally be quoted, e.g.</em>
+<pre>
+  (apply + '(1 2 3))
+  (apply '+ '(1 2 3)) 
+</pre>
+<em>but this is not necessary since all functions (including built-ins) are first class. A typical use is to pass an arbitrary function to another function in order to apply it to one or more arguments. If the function is preceded by</em> <code>#</code><em> it is presumed to be a NewtonScript function.</em>
+
+<p><code>(car list)</code>
+<br><em>Return the head of a non-empty list.</em>
+
+<p><code>(cdr list)</code>
+<br><em>Return the tail of a list.</em>
+
+<p><code>(cons expr list)</code>
+<br><em>Return a new list where the first argument is at the head,
+and the second argument constitutes the rest of the list.</em>
+
+<p><code>(eval expr)</code>
+<br><em>Invoke the interpreter on an expression. The latter is evaluated in
+the current environment.</em>
+
+<p><code>(length list)</code>
+<br><em>Return the length of a list.</em>
+
+<p><code>(list expr1 ...)</code>
+<br><em>Create a new list consisting of one or more expressions of any
+type.</em>
+
+<p><code>(map func arg-list1 ...)</code>
+<br><em>The function (func) is applied to as many arguments as there are argument lists. Arguments for each invocation of func are taken from the same position in each argument list. All argument lists must have the same length in this implementation. A list containing the results is returned.</em>
+
+<p><code>(member expr list)</code>
+<br><em>Return the first sublist of list whose</em> <code>car</code> <em>is expr. If expr is not found,</em> <code>nil</code> <em> is returned. The test for equality is</em> <code>equal?</code><em>, ie. structural equivalence.</em>
+
+<p><code>(not expr)</code>
+<br><em>If the single argument evaluates to</em> <code>nil</code> <em>,</em> <code>t</code> <em>is returned, otherwise</em> <code>nil</code> <em>is returned.</em>
+
+<p><code>(nth n list)</code>
+<br><em>Returns the Nth element of the list where 1 <= n <= </em>
+<code>(length list)</code>. It is equivalent to:
+<pre>
+  (defun nth (n L)
+     (cond ((null? L) '()) 
+	   ((= n 1) (car L))
+	   (t (nth (- n 1) (cdr L))))))
+</pre>
+
+<p><code>(seq n)</code>
+<br><em>Returns a list of the integers 0..n-1.</em>
+
+<p><code>(set-nth! n list expr)</code>
+<br><em>Sets the Nth element of the list to the specified value,
+where 1 <= n <= </em><code>(length list)</code>
+
+<p><b>General predicates.</b>
+<br><code>(atom? expr)</code>
+<br><em>Return</em> <code>t</code> <em>if expr is an atom (symbol, number, </em> <code>t</code> <em>, </em> <code>nil</code> <em>), otherwise </em> <code>nil</code> <em>.</em>
+
+<p><code>(eq? expr1 expr2)</code>
+<br><em>Return </em> <code>t</code> <em> if expr1 and expr2 evaluate to 
+identical symbols, numbers, or references, or if they both evaluate to </em> 
+<code>t</code> <em> or </em> <code>nil</code> <em>. Otherwise </em> 
+<code>nil</code> <em> is the result.</em>
+
+<p><code>(equal? expr1 expr2)</code>
+<br><em>Return </em> <code>t</code> <em> if expr1 and expr2 are structurally identical, otherwise </em> <code>nil</code> <em>. equal? would return </em> <code>t</code> <em> where </em> <code>eq?</code> <em> would, but unlike </em> <code>eq?</code> <em>, two lists whose references were different, but whose structure was identical would cause </em> <code>equal?</code> <em> to return </em> <code>t</code> <em>.</em>
+
+<p><code>(list? expr)</code>
+<br><em>Return</em> <code>t</code> <em>if expr is a list (note that</em> <code>nil</code> <em>is considered to be a list and an atom), otherwise </em> <code>nil</code> <em>.</em>
+
+<p><code>(null? expr)</code>
+<br><em>Return </em> <code>t</code> <em> if expr is the empty list or </em> <code>nil</code> <em>, otherwise return </em> <code>nil</code> <em>.</em>
+
+<p><b>Numeric primitives.</b>
+<br><code>+, -, *, /</code>
+<br><em>All work with one or more arguments, e.g.</em>
+<code>(/ 2) => 0.5</code>
+
+<p><code>=, >, < </code>
+<br><em>All work with one or more arguments, e.g.</em>
+<code>(< 1 2 3 4) => t</code>
+
+<p><code>cos, log, log10, pow, sin, sqrt, tan</code>
+<br><code>pow</code> <em>takes two arguments while the others take one, 
+e.g.</em>
+<br><code>(pow 2 3) => 8</code>
+<br><em>Arguments to trigonometric functions are taken to be in radians.</em>
+
+<p><code>(random n)</code>
+<br><em>Generates a random number from 0..n-1.</em>
+
+<p><b>Graphics primitives. These are mostly Turtle Graphics commands with
+all but <code>plot</code> and <code>draw-shape</code> affecting the (imaginary 
+and invisible) turtle's location and orientation.</b>
+<br><code>(draw-shape shape-object [style-frame])</code>
+<br><em>Draw a shape on LittleLisp's graphics view where shape-object is the return value from a NewtonScript shape-creation function, e.g.</em> <code>(draw-shape (#MakeOval 10 10 50 50))</code><em>. The drawing is clipped to the graphics view and added to the refresh list. This function does NOT affect the turtle's position. Note: if you use this function, it is assumed that you know enough NewtonScript to understand what a shape object and style frame are, that you have access to NewtonScript programming documentation, and that you pass appropriate values. See also <a href="#calling_ns">Calling NewtonScript from LittleLisp</a>.</em>
+
+<p><code>(home)</code>
+<br><em>Reset the turtle to its home position and direction, in the center
+of the graphics view and pointing upward.</em>
+
+<p><code>(line-to x y)</code>
+<br><em>Move the turtle's pen to (x,y), drawing from the current position 
+to there.</em>
+
+<p><code>(move-to x y)</code>
+<br><em>Move the turtle's pen to (x,y) without drawing.</em>
+
+<p><code>(plot x y)</code>
+<br><em>Plot a pixel at (x,y) but do NOT change the turtle's position.</em>
+
+<p><code>(turn degrees)</code>
+<br><em>Rotate the turtle left (minus) or right by the specified amount.</em>
+
+<p><code>(walk steps)</code>
+<br><em>Move the turtle by the specified amount in the current direction.</em>
+
+<p><b>String primitives, similar to those found in Scheme (albeit a 
+subset).</b>
+<br><code>(read-string)</code>
+<br><em>Permit entry of a string via a modal input slip.</em>
+
+<p><code>(string expr1 ... exprN)</code>
+<br><em>Construct a string from its arguments.</em>
+
+<p><code>(string? expr)</code>
+<br><em>Return </em> <code>t</code> <em> if expr is a string, otherwise </em> <code>nil</code> <em>.</em>
+
+<p><code>(string-copy string)</code>
+<br><em>Make a copy of the supplied string.</em>
+
+<p><code>(string-length string)</code>
+<br><em>Return the number of characters in the specified string.</em>
+
+<p><code>(string->number string)</code>
+<br><em>Return a number given a string, or</em> <code>nil</code> <em>if the 
+string does not represent a valid number or the count of digits on either 
+side of the decimal point exceeds 63. Examples of valid numbers are:</em>
+<pre>
+  1, 1.2, -12,345.78
+</pre>
+
+<p><code>(substring string start end)</code>
+<br><em>Returns a string corresponding to the specified portion of the 
+string. start and end must be integers satisfying</em>
+<code>0 <= start <= end <= (string-length string)</code>
+
+<p><code>(write-string string notepad-filename)</code>
+<br><em>Write a string to the specified Notepad file. Both arguments are
+strings. The file must already exist.</em>
+
+<p><b>I/O primitives other than <code>read-string</code> and 
+<code>write-string</code>.</b>
+<br><code>(ask message-string button-string1 ... button-stringN)</code>
+<br><em>Display a message and the specified buttons in a notifier, returning 
+the number (from 1 to N) of the clicked button.</em>
+
+<p><code>(display expr)</code>
+<br><em>Display the expression in a slip in human-readable manner.</em>
+
+  <p><a href="#contents">Contents</a></p>
+ 
+  <hr>
+  <a name="examples">
+  <h2>Examples</h2> 
+
+<h4>Turtle Graphics</h4>
+<pre>
+; Draw a tree
+; Try n=20
+(defun tree (n)
+   (cond ((not (< n 5))
+          (begin
+            (turn 30) (walk n)
+            (tree (* n 0.75))
+            (walk (- n)) (turn (- 60))
+            (walk n) (tree (* n 0.75))
+            (walk (- n)) (turn 30)))))
+
+; Draw arbitrary regular polygon
+; d = side length. Try d=40, sides=5
+(defun poly (d sides)
+   (do-poly d sides (/ 360 sides)))
+
+(defun do-poly (d sides angle)
+  (cond ((> sides 0)                           
+         (begin
+	   (walk d) (turn angle)
+              (do-poly d (- sides 1) angle)))))
+
+; Draw flower with sides of length len
+(defun flower (len)
+   (let* ((fourside (lambda (len n)
+                (cond ((> n 0) (begin
+                    (walk len) (turn 30)
+                    (walk len) (turn 150)
+                    (fourside len (- n 1)))))))
+          (do-flower (lambda (len) (begin
+              (fourside 40 2) (turn 20)))))
+              (repeat 18 (do-flower 40))))
+
+; The Dragon Curve
+; Try depth = 8, side = 5
+(defun dragon (depth side)
+   (cond ((= depth 0) (walk (/ side 2)))
+            ((> depth 0) (begin
+              (dragon (- depth 1) side)                   
+	      (turn 90)
+	      (dragon (- (- depth 1)) side)))
+        (t (begin
+              (dragon (- (+ depth 1)) side)               
+	      (turn 270)
+	      (dragon (+ depth 1) side)))))
+
+; Draw a donut
+(defun torus ()
+   (repeat 36
+      (begin
+        (repeat 36
+	(begin (walk 8) (turn 10)))
+	(walk 3)
+	(turn 10))))
+
+; Draw a star with sides of length len
+(defun star (len)
+ (move-to 100 150)
+   (repeat 12
+      (begin
+         (walk len)
+         (turn 150))))
+
+; Try n = 3
+(defun boxit (n)
+   (cond ((= n 0) (walk 2))
+             (t (let* ((M (- n 1))
+	               (lt90 (- 90)))
+		  (boxit m) (turn lt90)
+		  (boxit M) (turn 90)
+		  (boxit M) (turn 90)
+		  (boxit m) (turn lt90)
+		  (boxit M)))))
+
+</pre>
+
+<hr>
+
+<a name="eg_lambda">
+<h4>Lambda Calculus</h4>
+<pre>
+; 3 simple combinators: true, false, if.
+; Pierce 1995
+
+(setq True
+   (lambda (tr) (lambda (f) tr)))
+(setq False
+   (lambda (tr) (lambda (f) f)))
+(setq myIf (lambda (l)
+   (lambda (M)
+      (lambda (n) ((l m) n)))))
+
+; A test of 'if'.
+(((myIf false) 'M) 'N)
+</pre>
+
+<hr>
+<h4>Other Graphics</h4>
+<pre>
+; Chaos from a simple equation
+; Try k=0.5..2, x=0.1, i=0, n=200, step=4
+(defun kx (k x i n step)
+   (move-to 0 100)
+   (let* ((draw (lambda (x i)
+               (cond ((not (> i n))
+                     (let* ((x (-(* k x x) 1))
+                           (ampl(+(* x 25)100)))
+                       (line-to i ampl)
+                       (draw x (+ i step))))))))
+            (draw x i)))
+
+; Draw a Sierpinski triangle
+; Try times = 200
+(defun sierpinski (times)
+   (let* ((XX '(50 170 110))
+             (yy '(50 50 150))
+             (x 110) (y 50))
+    (repeat times
+      (let* ((posn (+ 1 (random 2))))
+      (setq x (/ (+ x (nth posn xx)) 2))
+      (setq y (/ (+ y (nth posn yy)) 2))
+      (plot x y)))))
+</pre>
+
+<hr>
+
+<h4>Math</h4>
+<pre>
+; Approximate PI.
+; Try n = 500 but enable Break!
+; More iterations are required for an accurate value of PI.
+(defun pi (n)
+   (let* ((4* (lambda (x) (* X 4)))
+             (1+ (lambda (x) (+ x 1)))
+             (3+ (lambda (X) (+ x 3)))
+             (terms (map 4* (seq n)))
+             (first (map 1+ terms))
+             (second (map 3+ terms)))
+ (* (apply +
+   (map / (map * first second))) 8)))
+</pre>
+
+<hr>
+
+<a name="calling_ns">
+<h4>Calling NewtonScript from LittleLisp</h4>
+<pre>
+; Sort numbers in ascending order
+(setq x (repeat 5 (random 50)))
+(defun sort(y)(#Sort y '< nil))
+(sort x)
+x
+
+; Get a frame slot's value.
+(#GetVariable (frame ((x 2))) 'x)
+
+; Draw an ellipse with a pen size of 5 pixels.
+; Notice that real numbers must be converted to integers here.
+(draw-shape 
+   (#MakeOval (#floor 10) (#floor 10) (#floor 50) (#floor 80))
+   (frame ((pensize (#floor 5)))))
+</pre>
+ 
+<hr>
+
+<a name="eg_misc">
+<h4>Miscellaneous</h4>
+<pre>
+; A counter object
+(defun mkCounter (n)
+   (lambda ()
+         (setq n (+ n 1))))
+(setq Counter (mkCounter 5))
+(repeat 7 (counter))
+
+
+; Simple random sentence generator.
+; Norvig, p 36.
+(defun sentence ()
+        (append (noun-phrase)
+                  (verb-phrase)))
+
+(defun noun-phrase ()
+        (append (article) (noun)))
+
+(defun verb-phrase ()
+        (append (verb)
+                  (noun-phrase)))
+
+(defun article ()
+        (one-of '(the a)))
+
+(defun noun ()
+     (one-of
+        '(man ball woman table)))
+
+(defun verb ()
+     (one-of
+          '(hit took saw liked)))
+
+(defun random-elt (choices)
+  (nth (+ (random (length choices)) 1)
+          choices))
+
+(defun one-of (set)
+   (list (random-elt set)))
+
+(sentence)
+
+
+; Rule-based version of above sentence generator.
+; This one's somewhat slower. Norvig, p 39.
+(defun rule-rhs (rule)
+   (cdr (cdr rule)))
+
+(defun rewrites (category)
+   (rule-rhs
+     (assoc
+        category *grammar*)))
+
+(defun assoc (sym alist)
+   (cond ((null? alist) nil)
+         ((eq? sym (car (car alist)))
+          (car alist))
+         (t (assoc 
+	      sym
+              (cdr alist)))))
+
+(defun generate (phrase)
+   (cond ((list? phrase)
+          (merge
+             (map generate
+                  phrase)))
+         ((rewrites phrase)
+          (generate
+             (random-elt
+                (rewrites phrase))))
+         (t (list phrase))))
+
+(defun merge (L)
+   (cond ((null? L) '())
+         ((atom? (car L))
+          (cons (car L)
+                (merge (cdr L))))
+         (t (append
+               (merge (car L))
+               (merge (cdr L))))))
+
+(setq *simple-grammar*
+   '((sentence -> (noun-phrase verb-phrase))
+     (noun-phrase -> (article noun))
+     (verb-phrase -> (verb noun-phrase))
+     (article -> the a)
+     (noun -> man ball woman table)
+     (verb -> hit took saw liked)))
+
+(setq *grammar* *simple-grammar*)
+
+(generate 'sentence)
+</pre>
+
+  <p><a href="#contents">Contents</a></p>
+
+  <hr>
+  <a name="disclaimer">
+  <h2>Disclaimer</h2>  
+  <p>Although every care has been taken in the development and testing of 
+LittleLisp, the author will not be held liable for damages caused either 
+directly or indirectly as a result of its use. Nor is its suitability 
+guaranteed for any particular purpose.</p>
+
+  <p><a href="#contents">Contents</a></p>
+
+  <hr>
+  <a name="references">
+  <h2>References and Further Reading</h2>  
+  <p>A good starting point for learning more about Lisp is Daniel P. Friedman 
+  and Matthias Felleisen's <em>The Little Lisper</em> (MIT Press, 1987). Its 
+  more recent incarnation is as <a href="http://mitpress.mit.edu/book-home.tcl?isbn=0262560992"><em>The Little Schemer</em></a> (MIT Press, 1995), and its 
+  sequel: <em>The Seasoned Schemer</em> (MIT Press, 1996).</p>
+
+  <p>You can find out more about Scheme from 
+  <a href="http://www-swiss.ai.mit.edu/scheme-home.html">The MIT Scheme 
+  page</a> from where you can obtain, among other things, the latest version
+  of the definitive <em>Revised Report on Scheme</em>. There are lots of 
+  good books about Scheme, among them Brian Harvey and Matthew Wright's 
+  <em>Simply Scheme: Introducing Computer Science</em> (MIT Press, 1994), 
+  and Harold Abelson, Gerald Jay Sussman and Julie Sussman's <em>Structure 
+  and Interpretation of Computer Programs</em> (MIT Press, 1985). These 
+  are as much about Computer Science in general, as they are about Scheme.</p>
+
+  <p>The definitive reference for Common Lisp is <em>Common Lisp the 
+  Language</em> by Guy L. Steele Jr (Digital Press, 1984). Mine is an
+  old copy. You can download <a href="http://www.cs.cmu.edu/Groups/AI/html/cltl/cltl2.html">Common Lisp the Language, 2nd Edition</a> in various 
+  formats.</p>
+
+  <p>I've always been fascinated by Turtle Graphics (TG), hence the inclusion
+  of TG commands in LittleLisp. It's also interesting to note that Logo is 
+  often considered to be a dialect of Lisp. I implemented TG in my 
+  <a href="http://members.ozemail.com.au/~djbenn/docs/about_ace.html">ACE BASIC</a> compiler and 
+  <a href="http://members.ozemail.com.au/~djbenn/docs/pubs.html">wrote a paper</a> describing a TG
+  implementation for Ken Iverson's <a href="http://www.jsoftware.com/">J</a>
+  language. The definitive reference for TG is Harold Abelson and Andrea 
+  diSessa's <em>Turtle Geometry: The Computer as a Medium for Exploring 
+  Mathematics</em> (MIT Press, 1992).</p>
+
+  <p>The examples make reference to Pierce (<a href="#eg_lambda">Lambda 
+  Calculus</a>) and Norvig (<a href="#eg_misc">Miscellaneous</a>).
+  The first is a 1995 paper by Benjamin C. Pierce entitled 
+  <em>Foundational Calculi for Programming Languages</em> which was at that 
+  time (December 22 1995) supposed to appear in the CRC Handbook of Computer 
+  Science and Engineering, but I don't know if it did. The portion of the
+  paper of interest here is that concerning the Lambda Calculus. There are
+  plenty of references which treat this topic, e.g. Daniel P. Friedman,
+  Mitchell Wand, and Christopher T. Haynes' <em>Essentials of Programming
+  Languages</em> (MIT Press, 1992), and Ravi Sethi's <em>Programming 
+  Languages: Concepts and Constructs</em> (Addison Wesley, 1996). Peter 
+  Norvig's <em>Paradigms of Artificial Intelligence Programming: Case Studies 
+  in Common Lisp</em> (Morgan Kaufmann, 1992) was used as a reference for the 
+  sentence generation example code.</p>
+ 
+  <p><a href="#contents">Contents</a></p>
+
+  <hr>
+  <a name="history">
+  <h2>Revision History</h2>  
+
+  <h4>Version 0.9 to 1.0&#223</h4>
+
+    <p><em>Bug fixes</em>
+    <ol>
+     <li><code>map</code> and <code>apply</code>: too many evaluations were 
+     occurring.</li>
+     <li>If the head of a list was a list, it was not being correctly 
+     evaluated.</li>
+     <li>Division-by-zero was not being detected in all cases.</li>
+     <li>Exceptions are now used internally to prevent incorrect error 
+     handling.</li> 
+     <li>Some objects weren't being cloned when they should have been and 
+     could be mutated as a result.</li>
+     <li>Items in popup menus are now sorted.</li>
+     <li>Built-in functions are now first class so do not need to be quoted 
+     (but still <em>may</em> be) when passed around.</li>
+     <li>The graphics view now refreshes when obscured.</li>
+     <li>The turtle wasn't being homed when the graphics view 
+     was closed.</li>
+     <li><code>(random N)</code> produced values in the range 0..N instead of 
+     0..N-1.</li>
+     <li>The behaviour of <code>member</code> was incorrect. It was searching 
+     too deeply.</li>
+    <li><code>nil</code> was not being handled correctly by some 
+    built-in functions.</li>
+    </ol></p>
+
+    <p><em>Features</em>
+    <ol>
+     <li>The output slip now scrolls.</li>
+     <li>A comment character ("<code>;</code>") - has been added.</li> 
+     <li>The input area may be stored as a note.</li>
+     <li>Loading of notes is now accompanied by a progress slip.</li>
+     <li>The Notes application can be invoked from LittleLisp.</li>
+     <li>A user break facility was added.</li>
+     <li>Some popup menus were rearranged for consistency and ease of use.</li>
+     <li><code>rand</code> was renamed <code>random</code> to be Scheme 
+     compliant.</li>
+     <li><code>draw-shape</code> was added to provide a more general graphics 
+     capability than is provided by the other built-in functions.</li>
+     <li><code>member?</code> was converted to <code>member</code> to be 
+     compliant with other Lisp dialects.</li>
+     <li>An info button and popup menu was added.</li>
+     <li>The <code>while</code> and <code>error</code> special forms were 
+     added.</li>
+     <li>The <code>ask</code>, <code>display</code>, <code>list?</code>
+     <code>nth</code>, and <code>set-nth!</code> functions were added.
+     <li>Scheme-like string functions were added.</li>
+    </ol></p>
+
+  <h4>Version 1.0&#223 to 1.01</h4>
+
+    <p><em>Bug fixes</em>
+    <ol>
+     <li>It wasn't possible to copy from the output slip. It is now.</li>
+     <li>The <code>eval</code> function was inadvertently mapped to a
+     non-existent handler as a result of an untested late change in
+     1.0&#223.</li>
+     <li>Fixed function application error message.</li>
+    </ol></p>
+
+    <p><em>Features</em>
+    <ol>
+     <li>Added <code>if</code> special form.
+     <li>Added <code>write-string</code> function.</li>
+     <li>Made Newton Book accessible from LittleLisp's info menu..</li>
+    </ol></p>
+
+  <p><a href="#contents">Contents</a></p>
+
+  <hr>
+  <a name="final_word">
+  <h2>Final Word</h2>  
+  <p>The following are some of my thoughts for future LittleLisp releases, 
+     in no particular order:
+    <ul>
+     <li>Interface improvements:</li>
+     <ul>
+      <li>An interface better suited to devices other than the MP 120/130;
+      <li>Keyboard shortcuts, e.g. for <code>Eval</code>;</li>
+      <li>Scrollable input area;</li>
+      <li>Better Pretty Printing;</li>
+     </ul>
+     <li>Preferences;</li>
+     <li>Improved speed; LittleLisp currently uses NewtonScript arrays and 
+     frames to represent Lisp code. There is scope for 
+     optimisation here. Another option would be to compile LittleLisp code
+     to NewtonScript and execute that. Of course, this already happens when 
+     <a href="#calling_ns">calling NewtonScript</a> from LittleLisp;</li>
+     <li>Frames as first class values;</li>
+     <li>Support for sound generation;</li>     
+     <li>Saving LittleLisp's environment between sessions and/or providing
+     for an init script;</li>
+     <li>More built-in functions, depending upon feedback;</li>
+     <li>Fixing bugs, of course; LittleLisp has been fairly well sanity
+     tested, but I need your help to test it in normal use;</li> 
+     <li>Lots of other stuff!</li>
+    </ul></p>
+
+  <p>Since I don't really have time to work on LittleLisp, I've released the
+  all the <A HREF="../LittleLisp1.01.zip">Windows NTK 1.6.1 project files</A>
+  (including exported text).
+  Better late than never I guess. Here's the <A HREF="../ReadMe.txt">ReadMe</A> 
+  file from the distribution.</p>
+
+  <p>I'd like to thank Mark Zimmerman for his early attention to LittleLisp
+  and his excellent suggestions. Thanks also to Laurent Cheno for 
+  converting the beta docs to Newton Book format, and Gary Moody for the
+  1.01 version of the Newton Book. Aaron Reichow was the one who kept bugging
+  me (nicely) to release the source to LittleLisp so he could adapt the display
+  code to his own needs, which as it turns out, took me far too long. Sorry Aaron.</p>
+
+  <p>Please feel free to tell me what you're doing with LittleLisp. If
+  you write interesting programs, I'd love to see them and maybe include
+  them in this document or make them available elsewhere.</p>
+
+  <p>Direct any bug reports, questions or comments to me via
+  <a href="mailto:djbenn@ozemail.com.au">e-mail</a> (djbenn@ozemail.com.au)
+  and I'll respond as soon as I can. You can also reach
+  me by phone on +61 8 8266 6508 [home] or +61 8 8203 3682 [work].</p>
+
+  <p>Enjoy!</p>
+  <p>David Benn, Adelaide, South Australia, January 2002</p>
+  <p><a href="#contents">Contents</a></p>
+
+  <hr>
+
+  <A HREF="http://members.ozemail.com.au/~djbenn/"><IMG SRC=gfx/HomeBut.GIF></a> 
+ </body>
+</html>
+

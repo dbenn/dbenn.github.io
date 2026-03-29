@@ -1,0 +1,373 @@
+<html>
+<head>
+  <title>OrbitViewer Invocation</title>
+  <link rel="stylesheet" href="ov.css" type="text/css">
+</head>
+<body id="docBody" onLoad="setupMenus()">
+ <script type="text/javascript" src="common_ov.js"></script>
+
+ <script type="text/javascript">
+
+  <!-- Hide the code from non-compliant browsers.
+
+  // Future:
+  //
+  // - Sanity check element field contents before applet invocation.
+  // - Permit other formats to be used to populate fields part from MPC,
+  //   in particular, unambiguous formats on MPC site.
+  // - Permit cookie expiry to be configured from web page.
+  // - Allow explicit deletion of popup menu items.
+  // - Another approach to this would be to modify the Java applet to
+  //   be amenable to being manipulated directly by ECMAScript code as
+  //   I've done elsewhere.
+
+  // This function is intended to be invoked upon page load.
+  function setupMenus() {
+      //deleteCookie("comets");
+
+      // Populate comet popup menu.
+      var cometList = getCookie("comets");
+      if (cometList != null) {
+        var popupMenu = document.getElementById("comet_menu");
+        populateMenu(popupMenu, cometList.split(":"));
+        retrieveCometValues();
+      }
+
+      //document.debug.text.value = getCookie("comets");
+  }
+
+  /*
+    Render the applet on the page, add the object to the
+    popup menu, and persist information about the object
+    as a cookie.
+  */
+  function invokeOrbitViewerForComet(appletSize, elements) {
+    invokeOrbitViewer(appletSize, elements, "comets", "comet_menu");
+  }
+
+  function populateFieldsForComet(mpcElements, elements) {
+
+      // Extract orbital elements from MPC formatted text
+      // and populate comet form fields.
+
+      // Get each line, skipping leading blank lines.
+      // IE sees such lines as having a length of one
+      // whereas for Mozilla the length is 0.
+      text = mpcElements.text.value;
+      lines = text.split("\n");
+      startLine = 0;
+      while (lines[startLine].length <= 1) {
+          startLine++;
+      }      
+
+      elements.name.value = reformatName(lines[startLine]);
+
+      // There are minor format variations, including the "Epoch..." 
+      // line apparently being optional. Establish the first data line.
+      if (lines[startLine+1].substr(0, 5) == "Epoch") {
+          startLine += 2;
+      } else {
+          startLine++;
+      }
+
+      // Reformat date and store in form.
+      tTokens = lines[startLine].split(whitespace);
+      elements.t.value = tTokens[1] + 
+                         getMonthNumber(tTokens[2]) + 
+                         getTwoDigitDayNumber(tTokens[3]);
+
+      // Extract simple key-value pairs.
+      elements.e.value = getFieldValue(lines[startLine+4], "e");
+      elements.q.value = getFieldValue(lines[startLine+1], "q");
+      elements.peri.value = getFieldValue(lines[startLine+2], "Peri");
+      elements.node.value = getFieldValue(lines[startLine+3], "Node");
+      elements.incl.value = getFieldValue(lines[startLine+4], "Incl");
+
+      // Equinox: (YYYY.N)
+      eqnxTokens = lines[startLine+1].split(whitespace);
+      elements.eqnx.value = eqnxTokens[2].substr(1, 6);
+  }
+
+  // Populate fields with values retrieved from a cookie.
+  function retrieveCometValues() {
+      var elements = document.cometElements;
+      var cometList = document.getElementById("comet_menu");
+      var cometName = cometList.options[cometList.selectedIndex].text;
+      var elementStr = getCookie(cometName);      
+      elements.name.value = cometName;      
+      elements.t.value = getFieldValue(elementStr, "t");
+      elements.e.value = getFieldValue(elementStr, "e");
+      elements.q.value = getFieldValue(elementStr, "q");
+      elements.peri.value = getFieldValue(elementStr, "peri");
+      elements.node.value = getFieldValue(elementStr, "node");
+      elements.incl.value = getFieldValue(elementStr, "incl");
+      elements.eqnx.value = getFieldValue(elementStr, "eqnx");
+  }
+  
+  // This next 3 functions populate a menu with comet names via AJAX.
+ 
+  function obtainCometNamesFromMPCWeb() {
+      var cometURL = "http://cfa-www.harvard.edu/iau/Ephemerides/Comets/";
+      loadXMLDoc(cometURL, populateCometNamesFromMPC);
+  }
+
+  function populateCometNamesFromMPC() {
+      if (req.readyState == 4) {
+        if (req.status == 200) {
+          var text = req.responseText;
+          var lines = text.split("\n");
+          var cometNames = new Array();
+          var cometNameMenu = document.getElementById("mpc_comet_names");
+
+          for (i=0;i<lines.length;i++) {
+            var match = lines[i].match(/\<li\>\<a href\=\"(.+)\.html\"\>(.+)\<\/a\>/i);
+            if (match) {
+              var name = match[2] + ": " + match[1];
+              cometNames.push(name);
+            }                   
+          }
+
+          populateMenu(cometNameMenu, cometNames);
+      } else {
+        alert("Unable to obtain data.");
+      }
+    }
+  }
+  
+  function mpcCommentNameToHTMLSuffix() {
+      var cometNameMenu = document.getElementById("mpc_comet_names");
+      var cometItem = cometNameMenu.options[cometNameMenu.selectedIndex].text;
+      var match = cometItem.match(/\: (.+)/); // e.g. P/2006 M3 (Barnard): 2006M3
+      return match[1];
+  }
+
+  // This next 2 functions obtain a comet's elements via AJAX and 
+  // populate the form.
+
+  function obtainElementsFromMPCWeb(cometLabel) {
+  	// Note: this is broken!! They changed the URL too much!
+  	var cometURL = "http://www.minorplanetcenter.net/iau/mpc.html" + cometLabel + ".html";
+  	loadXMLDoc(cometURL, populateCometElementsFormFromMPC);
+  }
+  
+  function populateCometElementsFormFromMPC() {
+      if (req.readyState == 4) {
+        if (req.status == 200) {
+          var text = req.responseText;
+          // Grab text between <pre> & </pre> tags.
+          // This gives us the first set of elements on the page,
+          // which may not be the only one (e.g. multiple epochs),
+          // and so not necessarily the one preferred in all cases.
+          var start = text.indexOf("<pre>\n") + 6;
+          var length = text.indexOf("</pre>\n") - start;
+          text = text.substr(start, length);
+          document.mpcOrbitalElements.text.value = text;
+          populateFieldsForComet(document.mpcOrbitalElements, document.cometElements);
+        } else {
+          alert("Unable to obtain data.");
+        }
+      }
+  }
+  
+  // -->
+ </script>
+
+<h3>Dynamic invocation of Osamu Ajiki & Ron Baalke's 
+<a href="http://www.astroarts.com/products/orbitviewer/">OrbitViewer</a> applet</h3>
+
+<table>
+ <tr>
+  <td>
+   <h4>
+  Rather than having to create the appropriate HTML for the
+  <a href="http://www.astroarts.com/products/orbitviewer/">OrbitViewer</a>
+  applet in a static web page, this page dynamically invokes
+  the applet near the end of the current page given input via 
+  a form. Moreover, orbital element text can be obtained from
+  the <a href="http://www.minorplanetcenter.net/iau/mpc.html">Minor Planet 
+  Centre</a> (MPC) web site and the form data populated automatically,
+  an example of which is given below. Object invocation also adds to
+  a popup menu for later retrieval of orbital elements. Browser
+  cookies are used to persist menu items with an expiry of 90 days.
+   </h4>
+  </td>
+  <td><a href="http://www.astroarts.com/products/orbitviewer/"><img src="../../images/orbitviewer-s.gif" width="125" height="125"></a></td>
+ </tr>
+</table>
+
+<hr>
+
+<table border=0>
+ <tr>
+  <table border=0>
+  <tr>
+   <th align="left">Comet's orbital elements</th> 
+  </tr>   
+  <tr>
+   <td>
+    <form name="cometElements">
+     <table border=1>
+      <tr>
+        <td><em>Name</em></td> 
+        <td><input type="text" name="name" value="" size=30></td>
+      </tr>
+      <tr>
+       <td><em>T</em></td> 
+       <td><input type="text" name="t" value="" size=30></td>
+      </tr>
+      <tr>
+       <td><em>e</em></td> 
+       <td><input type="text" name="e" value="" size=30></td>
+      </tr>
+      <tr>
+       <td><em>q</em></td> 
+       <td><input type="text" name="q" value="" size=30></td>
+      </tr>
+      <tr>
+       <td><em>Peri</em></td> 
+       <td><input type="text" name="peri" value="" size=30></td>
+      </tr>
+      <tr>
+       <td><em>Node</em></td> 
+       <td><input type="text" name="node" value="" size=30></td>
+      </tr>
+      <tr>
+       <td><em>Incl</em></td> 
+       <td><input type="text" name="incl" value="" size=30></td>
+      </tr>
+      <tr>
+       <td><em>Eqnx</em></td> 
+       <td><input type="text" name="eqnx" value="" size=30></td>
+      </tr>
+      <tr>
+       <td><input type="reset" value="Clear"></td>
+      </tr>
+      <tr>
+       <td>
+        <input type="button" value="Invoke Orbit Viewer"
+         onClick="invokeOrbitViewerForComet(document.appletSize, document.cometElements)">
+       </td>
+       <td>
+         <select id="comet_menu" onChange="retrieveCometValues()">
+         </select>
+       </td>
+      </tr>
+     </table>
+    </form>
+   </td>
+
+ </tr>
+ </table>
+ </td></tr>
+ 
+</table>
+
+ <table border=0> 
+  <tr>
+   <th align="left">
+    Orbital element text pasted from 
+    <a href="http://www.minorplanetcenter.net/iau/mpc.html">IAU MPC
+    web site</a>, e.g. <a href="http://www.minorplanetcenter.net/mpec/K04/K04J69.html">C/2001 Q4 NEAT's</a> elements, as shown here.
+   </th>
+  </tr>
+  <tr><td>
+   <form name="mpcOrbitalElements">
+    <textarea name="text" rows=8 cols=75>
+C/2001 Q4 (NEAT)
+Epoch 2004 June 4.0 TT = JDT 2453160.5
+T 2004 May 15.9671 TT                                   MPCM
+q   0.961957             (2000.0)            P               Q
+z  -0.000773       Peri.    1.2065      -0.8651715      -0.0662523
+ +/-0.000001       Node   210.2785      -0.4679584      -0.2496438
+e   1.000744       Incl.   99.6426      -0.1802589      +0.9660686
+    </textarea>
+  </td></tr>
+  <tr>
+  	<td>
+      <input type="button" value="Populate from MPC text"
+       onClick="populateFieldsForComet(document.mpcOrbitalElements, document.cometElements)">
+     </td>
+  </tr>
+  <!-- TODO: Hide the rows below with JavaScript if window.ActiveXObject not true? -->
+  <tr><td><br></td></tr>
+  <tr>
+     <th align="left">
+      Better still, obtain a list of comets from the MPC web site from which to select. *
+     </th>
+ </tr>
+ <tr>
+     <td>
+	 <input type="button" value="Obtain comet names from MPC web"
+	        onClick="obtainCometNamesFromMPCWeb()">
+         <select id="mpc_comet_names" onChange="obtainElementsFromMPCWeb(mpcCommentNameToHTMLSuffix())">
+         </select>
+     </td>
+ </tr>
+
+ <tr><td><br></td></tr>
+
+ <tr>
+  <td>
+ <em>* As of the current writing (August 2006) this works with Internet Explorer 6+ only.</em> You need to <a href="ie_settings.html">enable Internet Explorer</a> to automatically obtain a list of all comets and their elements from the MPC web site.
+  </td>
+ </tr>
+
+ <tr><td><br></td></tr>
+
+ <!--
+  <tr><td>
+   <form name="debug">
+    <textarea name="text" rows=8 cols=75>
+    </textarea>
+   </form>
+  </td></tr>
+-->
+
+   </form>
+
+  <!-- A placeholder for the applet. -->
+  <tr><td id="applet_target_parent"><br id="applet_target"></td></tr>
+  
+   <tr>
+  <table border=0>
+  <tr><td>
+   <form name="appletSize">
+    <table border=0>
+     <tr>
+      <th>Applet's Size</th>
+     </tr>
+     <tr>
+      <td><em>Width</em></td> 
+      <td><input type="text" name="width" value="600" size=20></td>
+     </tr>
+     <tr>
+      <td><em>Height</em></td> 
+      <td><input type="text" name="height" value="500" size=20></td>
+     </tr>
+    </table>
+   </form>
+  </td>
+  </tr>
+  </table>
+ </tr>
+
+ </table>
+
+<hr>
+<!--
+<h5>Tested against:<br>
+<ul>
+ <li>A random sampling of MPC orbital element text;</li>
+ <li>Internet Explorer version 6.0 on Windows 98 and Windows 2000;</li>
+ <li>Mozilla version 1.6 on Windows 2000 and version 1.7b on Windows 98. The page is messed up after applet insertion, but scolling the window corrects this.</li>
+</ul>
+<p>For more ECMAScript adventures, see
+<a href="http://members.ozemail.com.au/~djbenn/ECMAScript/">here</a>.</p>
+</h5>
+<hr>
+-->
+<A HREF="../../index.html"><IMG SRC="../../icons/HomeBut.GIF"></a>
+<br>
+Created by David Benn: <A HREF="mailto:dbenn@computer.org">dbenn@computer.org</a>
+</body>
+</html>

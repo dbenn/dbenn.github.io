@@ -1,0 +1,72 @@
+X-Sender: dbenn@pop.camtech.net.au
+X-Mailer: QUALCOMM Windows Eudora Light Version 3.0.5 (32)
+Date: Sun, 26 Sep 1999 16:45:04 +0900
+To: LittleLisp@onelist.com
+From: David Benn <dbenn@camtech.net.au>
+Mailing-List: list LittleLisp@onelist.com; contact LittleLisp-owner@onelist.com
+Delivered-To: mailing list LittleLisp@onelist.com
+List-Unsubscribe: <mailto:LittleLisp-unsubscribe@ONElist.com>
+Reply-to: LittleLisp@onelist.com
+Subject: Re: [LittleLisp] Intro/docs to "Triopartition.lisp" LL code in next msgs
+X-Rcpt-To: <dbenn@camtech.net.au>
+X-DPOP: DPOP Version 2.5g
+
+From: David Benn <dbenn@camtech.net.au>
+
+At 09:40 PM 25/09/99 -0400, you wrote:
+>From: Mark Zimmermann <z@his.com>
+[...stuff re: triangular numbers omitted...]
+>However, I haven't worked out the asymptotic behavior of the algorithm; it
+>may still be N cubed but with a smaller multiplier (and more overhead for
+>small numbers).  If anybody does some timing tests and can tell me how it
+>goes on her/his machine, I'd greatly appreciate it!  I also, of course,
+>welcome bug reports (and fixes!) as well as suggestions for improvements.
+
+I am using the following to time invocations of tp:
+ 
+(defun TimeTP (n)
+   (let* ((t1 (#TimeInSeconds))
+          (result (tp n))
+          (t2 (#TimeInSeconds)))
+         (display
+            (string
+                "Result for " n
+                " is " result
+                " [took " (- t2 t1)
+                " seconds]"))))
+
+You can invoke this as (TimeTP n) with Print unchecked, and you'll get a
+dialog telling you the result and the time taken.
+
+Your new code is a big improvement speed-wise. So far on my MP130, the
+results are:
+
+(tp 10) took 8 sec
+(tp 100) took 23 sec
+(tp 1000) took 117 sec
+(tp 2000) took 197 sec
+
+compared to 5, 14, 70, and 115 on your eMate, respectively.
+
+Rgds,
+
+DJB
+
+
+David Benn - author of ACE BASIC and LittleLisp
+e-mail: dbenn@camtech.net.au
+http://www.adelaide.net.au/~dbenn/
+phone: +61 8 8266 6508 [home] +61 8 8203 3682 [work]
+
+Astronomy uses people to explain the stars.
+Astrology uses the stars to "explain" people.
+   
+
+--------------------------- ONElist Sponsor ----------------------------
+
+Share your special moments with family and friends- send PHOTO Greetings
+at Zing.com! Use your own photos or choose from a variety of funny,
+                 cute, cool and animated cards.       
+   <a href=" http://clickme.onelist.com/ad/zing13 ">Click Here</a>
+
+------------------------------------------------------------------------

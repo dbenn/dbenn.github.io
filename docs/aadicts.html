@@ -1,0 +1,329 @@
+<HEAD>
+<TITLE>ACE: A Compiler for Everyone</TITLE>            
+</HEAD>
+
+<BODY>
+<H1>ACE: A Compiler for Everyone *</H1><H3>by David Benn, April 1994</H3><P>
+
+<H4>* This article first appeared in a now-defunct electronic journal 
+<EM>(Amiga Addicts).</EM> It was written prior to the current release of 
+ACE and so comments re: development carried out since version 2.0 appear 
+where appropriate.</H4>
+
+<HR>
+
+<H2>Introduction</H2><P>
+
+Around the middle of 1991 I was thinking about what would be a suitable
+next programming project. During the previous twelve months I had
+found myself becoming increasingly interested in programming language
+translation. This interest was sparked while studying a compiler 
+writing subject in my second-to-last semester as an undergraduate.<P>
+
+By the end of that semester, I'd written a Pascal- compiler which 
+produced p-codes for a hypothetical stack-based machine. Prior to this I 
+had written a BASIC interpreter.<P>
+
+Both the compiler and the interpreter were targeted at the IBM PC and were 
+written in Turbo Pascal. The interesting thing is that I approached the 
+BASIC interpreter from a naive point of view.<P>
+
+Well, what I came up with was a big, ugly program that actually worked 
+quite well as a BASIC interpreter (it supported graphics, sound, file I/O) 
+but was slow and inelegant. It was also no better than anything else that 
+was around at the time. But I had a great time writing it! I became obsessed 
+with it for a few months. I still run it from Windows every so often for a 
+chuckle.<P>
+
+However, the knowledge and experience I'd gained from both projects left me 
+decidedly hooked on the notion of developing compilers and interpreters.<P>
+
+After finishing that Pascal- compiler I decided to take what I'd learned and 
+apply it to the Amiga. I wrote a cut-down version of the LOGO programming 
+language because I'd always loved (and still do) the idea of Turtle Graphics. 
+Next I became interested in threaded interpreters as embodied by such languages as Forth. So, I became an avid follower of Forth for a time and wrote a 
+version of that language for the Amiga.<P>
+
+<HR>
+
+<H2>Enter ACE</H2><P>
+
+This was all good fun, but none of these interpreters or compilers 
+could be used for serious programming. What I wanted was to develop 
+a language that I could use <EM>myself </EM> for real work.<P>
+
+I had been programming in C for a couple of years by 1991 and was
+impressed by that language's simplicity, but annoyed at the amount
+of hard work required to produce even simple event-driven Amiga
+programs, due to the closeness to the operating system that was
+required.<P>
+
+Pascal and Modula-2 didn't really get you any further away from the
+operating system. BASIC did, but it was slow and perhaps even more
+importantly from my point of view, AmigaBASIC didn't let you produce
+standalone executables. You always needed the interpreter.<P>
+
+AmigaBASIC was slow, had a nasty editor, weird bugs and was generally
+temperamental. But, I got my start on the Amiga with BASIC when nothing
+else about the machine seemed familiar after my C64 days. And anyway,
+the <EM>language</EM> itself was quite nice. What was primarily needed 
+was for programs to run faster and to be standalone.<P>
+
+Okay, I'd seen a BASIC compiler or two for the Amiga, but they cost
+money! :)  I came across one free BASIC compiler called Cursor which had
+actually been written in AmigaBASIC (which I think is really neat).
+At that time, Cursor had a lot of features that weren't implemented *, 
+although I was impressed with what <EM>had</EM> been done.<P>
+
+<H5>* A more recent (1994) version of Cursor has been rewritten in C
+and is much more complete.</H5>
+
+In any case, I got to thinking how nice it would be to write my own 
+compiler and how I could improve upon what had gone before.<P>
+
+So it was in September of 1991 that I started the process of designing 
+what was to become ACE. The acronym <EM>A.C.E.</EM> has come to be associated 
+with a number of things including:<P>
+
+<UL>
+<LI> AmigaBASIC Compiler with Extras (most common usage)
+<LI> Automatic Computing Engine (ala Alan Turing)
+<LI> Dr Who's last companion. :-)
+</UL>
+
+The title of this article shows another possible meaning and indicates
+something of the spirit of the project.<P>
+
+<HR>
+
+<H2>Design Goals and Features</H2><P>
+
+Now, after five releases (1.0, 1.01, 1.02, 1.1a, 2.0) of ACE as a freeware
+compiler - with another version expected soon - I can identify several design 
+goals which have been most important to the development of ACE:<P>
+
+<UL>
+<LI> AmigaBASIC compatibility.
+<LI> Compatibility with as many versions of the operating system
+and hardware as possible. 
+<LI> Extra features which exploit the Amiga's hardware and 
+operating system.
+<LI> High level of functionality.  
+<LI> Creation of fast (and preferably small) executables.
+<LI> Extensibility.
+<LI> Ease of use.
+</UL>
+
+ACE satisfies each item on this list to some degree.<P>
+
+ACE is largely compatible with AmigaBASIC with relatively minor differences
+between the two languages. I am working to close the gap. Many programs will
+compile unchanged from AmigaBASIC (saved as ASCII text files) and many more
+require only small changes to compile under ACE.<P>
+
+ACE is known to be running on everything from an A1000 with 512K of RAM 
+to an A4000 with 5 Megs of RAM. I personally develop and run ACE on an 
+A500 * with a 52 Meg GVP hard drive and 5 Megs of RAM under Wb 2.04. Other
+people use everything from Wb 1.3 to 3.0.<P>
+
+<H5>* More recently, I have switched to an A1200 for development purposes.</H5>
+
+ACE boasts around 200 commands and functions. Expression evaluation and 
+built-in functions are almost identical to AmigaBASIC. Currently,
+ACE supports short and long integer, single-precision floating
+point and string data types.<P>
+
+ACE's high level of functionality can be seen by browsing through the
+online <A HREF="ref.html">reference manual</A> which accompanies it. There 
+are many language constructs, commands and functions not found in AmigaBASIC, 
+such as:<P>
+
+<UL>
+<LI> REPEAT..UNTIL loop.
+<LI> SUBprograms which allow recursion and return values.
+<LI> Turtle Graphics.
+<LI> Command-line argument handling functions.
+<LI> Inbuilt requester functions: MsgBox, InputBox[$], FileBox$.
+<LI> GADGET commands and functions.
+<LI> Support for menu command-key sequences (eg. Amiga-Q = Quit).
+<LI> Structure datatypes.
+<LI> Enhanced WAVE command allowing for large waveforms.
+<LI> Named numeric constants.
+<LI> Special SERIAL commands and function giving high level of
+control over serial I/O.
+</UL>        
+
+ACE has been used to write a wide variety of programs, from an 8SVX sound
+sample player to Neural Networks, a Simulation of Jupiter's Galilean Moons
+for any date and time, fractal graphics, games, shell utilities, 
+communications programs, etc.<P>
+
+I have used ACE to develop a graphical front-end <EM>for</EM> ACE, called AIDE. 
+This is included with the distribution.<P>
+
+The compiler produces programs which run (often much) faster than their 
+interpreted counterparts. An average size for each executable is around 40K.<P>
+
+The language is extensible in three main ways:<P>
+
+<UL>
+<LI> Ability to open shared libraries (in LIBS:) and use their
+functions as in AmigaBASIC.
+
+<LI> C or assembly language functions/routines may be called
+from ACE programs via EXTERNAL declarations.
+
+<LI> ACE source code which is frequently used may be included
+in a program with the #include directive.
+</UL>
+
+<H5><EM>Note: </EM>version 2.3 also allows for the creation of linkable
+subprogram library modules.</H5>
+
+Of course, as in AmigaBASIC, machine code routines can be called directly
+after poking them into memory byte by byte. This is rarely necessary 
+given the ability to call external functions from separately compiled or
+assembled C or assembly modules, a distinct advantage over AmigaBASIC.<P>
+
+Ease of use is an important factor. ACE can either be run from the shell
+or via AIDE (needs Wb 2.04 at least currently). A "bas" script automates
+the compile-assemble-link cycle when used from the shell. AIDE makes
+editing and compilation more pleasant via pull-down menus. Although ACE's
+compile-time error messages are probably no better than those of most
+compilers, they are generally comprehensible.<P>
+
+ACE produces assembly source code files which can be inspected as normal
+text files. A68K takes such a file and produces a machine code module. Blink
+links this object module with code from ACE's run-time libraries.<P>
+
+While not explicitly a "design goal", I have attempted to make ACE responsive
+to the needs of the people using the language. The inclusion of features such as 
+a high-performance serial I/O capability (with support for multi-port serial cards)
+has been a direct response to the needs of users. This continues to be important
+as ACE develops further, but each new potential feature must be evaluated in
+light of the likelihood of its widespread use as well as in terms of the aims
+of the language. When a new feature <EM>is</EM> added it must be done in such
+a way as to be consistent with the existing models employed by the language (eg. the notion 
+of channels is used for files and has also been used for serial I/O, etc) and
+the typical syntax of commands and functions.<P>
+
+<HR>
+
+<H2>The Future</H2><P>
+
+There are many items on my "to-do" list for ACE. Future plans include:<P>
+
+<UL>
+<LI> Random files (only sequential files are supported currently).
+<LI> Double-precision floating point (IEEE) math.
+<LI> A number of AmigaBASIC commands not yet implemented (eg. GET, PUT for
+graphics).
+<LI> Support for AGA screen modes.
+<LI> Sprites.
+</UL>
+
+and more.<P>
+
+The forthcoming version will include:<P>
+
+<UL>
+<LI> Interprocess communication.       
+<LI> IFF image file commands/functions.
+<LI> More pre-assembly optimisations.      
+<LI> FONT and STYLE commands. *           
+</UL>
+
+and many other features.<P>
+
+<H5>* All included in version 2.3</H5>
+
+I am under some pressure to move away from Wb 1.3 as the baseline operating
+system version and to make 2.04 the baseline. This won't happen in the
+upcoming version <EM>(v2.3)</EM>, but beyond that, I can't say. Trying to support 
+Wb 1.3 and 2.x/3.x of AmigaOS means a significant amount of duplication of
+functionality in fairly minor ways, and a tendency to discount the use 
+of interesting and useful features in more recent versions of the operating
+system.<P>
+
+The next release of ACE is scheduled for around the end of May 1994 <EM>(it
+was not actually released until late October)</EM>.<P>
+
+ACE <EM>may</EM> become a shareware product at some stage, but the fee is 
+unlikely to be more than $10 or $15.<P>
+
+<H5>Possibilities for versions of ACE beyond 2.3 include incorporating ideas 
+from object-oriented and functional programming, and a new programming model 
+more akin to the Amiga's underlying message-driven paradigm. The latter would 
+be an alternative to the current event-trapping and menu/gadget waiting models
+found in ACE.
+</H5>
+<HR>
+
+<H2>Conclusion</H2><P>
+
+After more than two years of (part-time) development, ACE has become a
+worthwhile project with a significant number of people finding it to be
+a useful tool with which to create Amiga programs.<P>
+
+It is a venture which is still able to enthuse me and I see plenty of scope 
+for further improvement and additions.<P>
+
+<HR>
+
+<H2>How to obtain ACE</H2><P>
+
+ACE v2.0 and AmigaGuide versions of the ACE v2.0 docs are 
+available <EM>(now v2.3, complete with AmigaGuide docs)</EM>:<P>
+
+<UL>
+<LI> Via anonymous FTP from:
+<PRE>
+     ftp.appcomp.utas.edu.au (/pub/amiga/ACE)
+     Aminet sites (dev/basic)
+</PRE>
+<LI> From CompuServe in the AmigaTech forum's Languages library.<P>
+	
+<LI> In recent Fred Fish collections (March/April 1994 and later CD-ROMs).<P>
+
+<LI> From miscellaneous BBSs.<P>
+</UL>
+
+<HR>
+
+<H2>Contacting the Author</H2><P>
+
+I am reachable via e-mail:<P>
+<PRE>
+	Internet:       D.Benn@appcomp.utas.edu.au
+	Compuserve:     100033,605
+</PRE>
+or via snail-mail:<P>
+<PRE>
+	181 St John Street, Launceston, Tasmania, 7250, Australia.
+</PRE>
+or by phone:<P>
+<PRE>
+	(003) 317 680 [home]
+	(003) 243 529 [work]
+</PRE>        
+In addition, there is now an Internet discussion list dedicated to ACE.<P>
+
+To subscribe to the list, send e-mail to:<P>
+<PRE>
+	Listserver@appcomp.utas.edu.au
+</PRE>
+The message should contain one line of the following form:<P>
+<PRE>
+	subscribe ace FirstName LastName
+</PRE>
+
+<HR>
+
+<H2>References</H2><P>
+
+D. Benn, 1994, <EM>ACE Programmer's Guide</EM><BR>
+D. Benn, 1994, <EM>ACE Language Reference</EM><P>
+
+<HR>
+<A HREF="../index.html"><IMG SRC=../icons/HomeBut.GIF></a>
+</BODY>

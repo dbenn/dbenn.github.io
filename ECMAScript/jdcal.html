@@ -1,0 +1,132 @@
+<html>
+ <head>
+  <title>Julian Day to Julian or Gregorian Calendar Date</title>
+   <script language = "JavaScript">
+    <!-- Hide the code from non-compliant browsers.
+
+    /* 1. Variable names have been preserved from the original 
+     *    BASIC code but "if" statements have been modified to 
+     *    permit conditional code blocks. 
+     * 2. Math.floor() returns the largest integer less than or
+     *    equal to the supplied argument. 
+     * 3. "==" is ECMAScript's equivalence operator ("=" in BASIC).
+     * 4. To locally scope this function's variables requires the
+     *    use of the var command, e.g. "var A,A1,B" (not used here)
+     *    otherwise they are global. 
+     */
+     function jdToCalendar(form) {
+       // Get integer and fractional parts of Julian Day.
+       J=Number(form.j.value);
+       F=Number(form.f.value);
+
+       F=F+0.5;
+       if (F>=1) {
+         F=F-1; J=J+1;
+       }
+      
+       if (form.calType.selectedIndex == 0) {
+	 // Julian Calendar.
+	 A=J;
+       } else {
+	 // Gregorian Calendar.
+	 A1=Math.floor((J/36524.25)-51.12264);
+	 A=J+1+A1-Math.floor(A1/4);
+       }
+                         
+       B=A+1524;
+       C=Math.floor((B/365.25)-0.3343);
+       D=Math.floor(365.25*C);
+       E=Math.floor((B-D)/30.61);
+       D=B-D-Math.floor(30.61*E)+F;
+       M=E-1; Y=C-4716;
+       if (E>13.5) M=M-12;
+       if (M<2.5) Y=Y+1;
+
+       // Display result in the form.
+       form.y.value = Y;
+       form.m.value = M;
+       form.d.value = D;
+     }
+  // -->
+ </script>
+</head>
+
+<body>
+ <h3>Julian Day to Julian or Gregorian Calendar Date.</h3>
+ <h4>Adapted from a May 1984 Sky & Telescope article.</h4>
+ <h5>This example is given in my March 2000 Sky & Telescope article.</h5>
+ <p> 
+
+ <!-- 
+  This form permits entry of the Julian Day and display 
+  of the date. While more complex than BASIC's INPUT
+  the interface is richer.
+ --> 
+ <form name="jdForm">
+ <p>
+  <table>
+   <tr>
+    <th align="right">Enter Julian Day:</th>
+    <td><input type="text" name="j" size=10> <em>(integer part)</em></td>
+    <td><input type="text" name="f" size=10> <em>(fractional part)</em></td>
+   </tr>
+   <tr>
+    <th align="right">Select Julian or Gregorian Calendar:</th>
+    <td>
+     <select name="calType">
+      <option>Julian Calendar</option>
+      <option>Gregorian Calendar</option>
+     </select>
+    </td>
+    <td align="left">
+     <input type="button" value="Convert" 
+     onClick="jdToCalendar(document.jdForm)">       
+    </td>
+   </tr>
+   <tr>
+    <th align="right">Calendar Date (Year, Month, Day):</th>
+    <td>
+     <input type="text" name="y" size=10>
+     <input type="text" name="m" size=5>
+     <input type="text" name="d" size=5>
+    </td>
+   </tr>
+  </table>
+  </p>
+ </form>
+
+ <h5>Here's the original code for comparison with the ECMAScript code
+ (e.g. see <em>jdToCalendar()</em>):</h5>
+  <pre>
+   900 REM   JD --> CALENDAR
+   905 REM
+   910 INPUT "J,F ";J,F
+   915 INPUT "JC (0) OR GC (1) ";G
+   920 F=F+0.5
+   925 IF F<1 THEN 935
+   930 F=F-1: J=J+1
+   935 IF G=1 THEN 945
+   940 A=J: GOTO 955
+   945 A1=INT((J/36524.25)-51.12264)
+   950 A=J+1+A1-INT(A1/4)
+   955 B=A+1524
+   960 C=INT((B/365.25)-0.3343)
+   965 D=INT(365.25*C)
+   970 E=INT((B-D)/30.61)
+   975 D=B-D-INT(30.61*E)+F
+   980 M=E-1: Y=C-4716
+   985 IF E>13.5 THEN M=M-12
+   990 IF M<2.5 THEN Y=Y+1
+   995 PRINT "DATE: ";Y;M;D
+   997 END
+   1000 REM  ------------------------
+   1001 REM  APPEARED IN ASTRONOMICAL
+   1002 REM  COMPUTING, SKY & TELE-
+   1003 REM  SCOPE, MAY, 1984
+   1004 REM  ------------------------
+  </pre>
+ </body>
+ <hr>
+ <A HREF="../index.html"><IMG SRC="../icons/HomeBut.GIF"></a> 
+</html>
+

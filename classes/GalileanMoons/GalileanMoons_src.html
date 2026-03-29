@@ -1,0 +1,911 @@
+<html>
+<title>GalileanMoons.java</title>
+<body bgcolor=white>
+<pre>
+/*
+** Displays the positions of the Galilean satellites
+** relative to Jupiter for a given date and time. The
+** latter defaults to now.
+**
+** Method taken from Jean Meeus' "Astronomical Algorithms", ch 43.
+** The low-accuracy method was chosen for the purposes of this applet.
+**
+**
+** Originally written by David Benn in ACE BASIC for the Amiga:
+**
+**      11th,12th,13th,17th,26th July 1993,
+**      18th December 1993,
+**      7th March 1994,
+**      14th August 1994 
+**
+** Translated to Java and improved for use as an applet:
+**
+**      4th,6th,7th,9th,10th,12th-14th,17th-20th November 1996
+**
+** Version 1.0 released on 18/11/96.
+** Version 1.1 released on 20/11/96: moons were shown to be in transit
+** when they were in fact behind the planet!
+**
+** Possible Improvements:       1. Set for any date and time.
+**                              2. Use Meeus' high-accuracy method.
+**                              3. Better use of AWT elements and layouts.
+*/
+
+import java.lang.Math;
+import java.util.Date;
+import java.awt.Graphics;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Event;
+import java.awt.Button;
+import java.awt.Frame;
+import java.awt.Panel;
+import java.awt.Label;
+import java.awt.TextArea;
+import java.awt.GridLayout;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+
+public class GalileanMoons extends java.applet.Applet implements Runnable
+{
+private final double radconv=57.295779;
+private final int Jradius=10, Mradius=2;
+private final int MILLISECONDS_PER_HOUR = 3600000;  // 60*60*1000
+
+private double JDE;
+private double d,V,M,N,J,A,B,K,R,rr,delta,psi,DE;
+private double first_u1,first_u2,first_u3,first_u4;
+private double u1,u2,u3,u4;
+private double G,H;
+private double r1,r2,r3,r4;
+
+// Colors.
+//
+private final Color tan = new Color(235,222,186);
+private final Color cherry = new Color(230,153,171);
+private final Color brown = new Color(204,153,135);
+
+// Moon locations as rectangular coordinates.
+//
+private double[] x = new double[4];
+private double[] y = new double[4];
+private double[] oldx = new double[4];
+
+// Interval between updates in hrs, mins, secs.
+//
+private int hr_interval = 0;
+private int min_interval = 1;
+private int sec_interval = 0;
+
+// Current date and time.
+//
+private int day,mon,yr,hr,min,sec,timeZoneOffset;
+
+// Applet size, center.
+//
+int center_x, center_y, width, height;
+
+// Thread and current date-time objects.
+//
+Thread jovianMoonsThread;
+Date theDate;
+
+// Font objects.
+//
+Font titleFont, timeFont, directionFont;
+
+// Button objects.
+//
+Button aboutButton, settingsButton;
+
+        public void init()
+        {
+        Date theUTCDate;
+
+                // Get initial UTC and Extended Julian Day.
+                //
+                // Note: version 1.02 of the JDK java interpreter
+                // does not seem to handle daylight saving time
+                // correctly, at least under win95. Netscape 3.0
+                // _does_ behave correctly in this regard however.
+                //
+                theDate = new Date();
+
+                theUTCDate = getUTCDate(theDate);
+
+                day = theUTCDate.getDate();
+                mon = theUTCDate.getMonth();
+                yr  = theUTCDate.getYear();
+                hr  = theUTCDate.getHours();
+                min = theUTCDate.getMinutes();
+                sec = theUTCDate.getSeconds();
+
+                JDE = JulianDay(day,mon+1,yr+1900) +    
+                      decimal_hours(hr,min,sec) / 24;
+
+                // Determine moon positions by an amount into the past
+                // corresponding to the update interval so that we can
+                // say which direction the moons are moving in.
+
+                // Circumstances of Jupiter.
+                //
+                JovianEphemeris(JDE - decimal_hours(hr_interval,
+                                                    min_interval,
+                                                    sec_interval) / 24);
+                // Positions of Galilean moons.
+                //
+                AngleFromInfConj();
+                DistFromCenter();
+
+                // Apparent rectangular coordinates of each moon
+                // and store the x value as the old coordinate
+                // for later comparison.
+                //
+                for (int i=0;i<4;i++)
+                {
+                        calc_x_y(i+1);
+                        oldx[i] = x[i];
+                }
+
+                // Set applet's background color.
+                //
+                setBackground(Color.black);
+
+                // Initialise fonts.
+                //
+                titleFont = new Font("TimesRoman",Font.BOLD+Font.ITALIC,24);
+                timeFont = new Font("TimesRoman",Font.PLAIN,12);
+                directionFont = new Font("Helvetica",Font.BOLD,16);
+
+                // Add buttons.
+                //
+                aboutButton = new Button("About...");
+                add(aboutButton);
+                //settingsButton = new Button("Settings...");
+                //add(settingsButton);
+        }
+
+        public void start()
+        {
+                if (jovianMoonsThread == null)
+                {
+                        jovianMoonsThread = new Thread(this);
+                        jovianMoonsThread.start();
+                }
+        }
+
+        public void stop()
+        {
+                if (jovianMoonsThread != null)
+                {
+                        jovianMoonsThread.stop();
+                        jovianMoonsThread = null;
+                }
+        }
+
+        public void run()
+        {
+        int milliSeconds;
+
+                while (true)
+                {
+                        // Circumstances of Jupiter.
+                        //
+                        JovianEphemeris(JDE);
+
+                        // Positions of Galilean moons.
+                        //
+                        AngleFromInfConj();
+                        DistFromCenter();
+
+                        // Apparent rectangular coordinates of each moon.
+                        //
+                        for (int i=1;i<=4;i++) calc_x_y(i);
+
+                        // Update display.
+                        //
+                        repaint();
+
+                        // Sleep for set interval.
+                        //
+                        milliSeconds = (int)(decimal_hours(hr_interval,
+                                                           min_interval,
+                                                           sec_interval) *
+                                             MILLISECONDS_PER_HOUR);
+                        try
+                        {
+                                Thread.sleep(milliSeconds);
+                        }
+                        catch (InterruptedException e) {}
+
+                        // Increment Julian Day + day fraction.
+                        //
+                        JDE += decimal_hours(hr_interval,
+                                             min_interval,
+                                             sec_interval) / 24;
+
+                        // Update the date object for display purposes.
+                        //
+                        theDate = new Date(theDate.getTime() + milliSeconds);
+
+                        // Store the current x value of each moon for
+                        // later reference. Use the very first calculation.
+                        //
+                        for (int i=0;i<4;i++) oldx[i] = x[i];
+                }
+        }
+
+        public void paint(Graphics g)
+        {
+        FontMetrics fm;
+        String text;
+        int textHeight;
+
+                // Find applet's center point, width, and height.
+                //
+                width = size().width;
+                height = size().height;
+                center_x = width / 2;
+                center_y = height / 2;
+
+                // Title.
+                //
+                g.setColor(Color.cyan);
+                g.setFont(titleFont);
+                fm = getFontMetrics(g.getFont());
+                text = "Galilean Moons";
+                textHeight = fm.getHeight()*2;
+                g.drawString(text,
+                             center_x - fm.stringWidth(text)/2,
+                             textHeight);
+
+                // Show when last updated.
+                //
+                g.setColor(Color.yellow);
+                g.setFont(timeFont);
+                fm = getFontMetrics(g.getFont());
+                text = "Last updated: " + theDate.toString() + ", " +
+                       theDate.toGMTString();
+                g.drawString(text,
+                             center_x - fm.stringWidth(text)/2,
+                             textHeight+fm.getHeight());
+
+                // Direction markers.
+                //
+                g.setColor(Color.blue);
+                g.setFont(directionFont);
+                fm = getFontMetrics(g.getFont());
+                g.drawString("W",fm.stringWidth("W"),
+                                 center_y + fm.getHeight()/2);
+                g.drawString("E",width - fm.stringWidth("E")*2,
+                                 center_y + fm.getHeight()/2);
+                g.drawString("N",center_x - fm.stringWidth("N")/2,
+                                 center_y - Jradius*2 - fm.getHeight()/2);
+                g.drawString("S",center_x - fm.stringWidth("S")/2,
+                                 center_y + Jradius*2 + fm.getHeight());
+
+                // If a moon is fully or partially behind the
+                // Jovian disk, plot it before rendering Jupiter.
+                //
+                g.setColor(Color.orange);
+                for (int i=0;i<4;i++)
+                {
+                        if (behind_planet(i))
+                        g.fillOval(center_x - (int)(x[i]*Jradius) - Mradius,
+                                   center_y - (int)(y[i]*Jradius) - Mradius,
+                                   Mradius*2, Mradius*2);
+                }
+
+                // Plot Jupiter.
+                // Include a rendition of atmospheric banding and the
+                // Great Red (well, Salmon these days) Spot.
+                //
+                g.setColor(tan);
+                g.fillOval(center_x - Jradius, center_y - Jradius,
+                           Jradius*2, Jradius*2);
+                g.setColor(brown);
+                g.drawLine(center_x - (Jradius-1), center_y - 2,
+                           center_x + (Jradius-2), center_y - 2);
+                g.drawLine(center_x - (Jradius-1), center_y + 2,
+                           center_x + (Jradius-2), center_y + 2);
+                g.setColor(cherry);
+                g.fillOval(center_x + Jradius/5, center_y + Jradius/5,
+                           Jradius/2, Jradius/4);
+
+                // Plot remaining moons.
+                //
+                g.setColor(Color.orange);
+                for (int i=0;i<4;i++)
+                {
+                        if (!behind_planet(i))
+                        g.fillOval(center_x - (int)(x[i]*Jradius) - Mradius,
+                                   center_y - (int)(y[i]*Jradius) - Mradius,
+                                   Mradius*2, Mradius*2);
+                }
+        }
+
+        private String X_Direction(double x)
+        {
+        // Direction of a moon's x-coordinate in relation to Jupiter.
+        //
+                if (x == 0) return "";
+                else
+                if (x < 0) return "East";
+                else
+                        return "West";
+        }
+
+        private String Y_Direction(double y)
+        {
+        // Direction of a moon's y-coordinate in relation to Jupiter.
+        //
+                if (y == 0) return "";
+                else
+                if (y < 0) return "South";
+                else
+                        return "North";
+        }
+
+        private void showObjectInfo(int X, int Y)
+        {
+        // Show information about the object clicked on,
+        // in the status bar, otherwise clear it.
+        //
+        String message = "";
+        String[] moonNames = { "Io", "Europa", "Ganymede", "Callisto" };
+        boolean moonClicked = false;
+
+                // A Galilean moon?
+                //
+                for (int mid_x, mid_y, i=0;i<4;i++)
+                {
+                      mid_x = center_x - (int)(x[i]*Jradius);
+                      mid_y = center_y - (int)(y[i]*Jradius);
+
+                      if (X >= mid_x - Mradius && X <= mid_x + Mradius &&
+                          Y >= mid_y - Mradius && Y <= mid_y + Mradius)
+                      {
+                        message = moonNames[i] + ": ";
+                        if (x[i] != 0)
+                                message = message + Math.abs(x[i]) +
+                                                    " Jovian radii " +
+                                                    X_Direction(x[i]);
+
+                        // Either delimit information about two
+                        // directions or if the moon's coordinate
+                        // is at Jupiter's center, say so.
+                        //
+                        if (x[i] != 0 && y[i] != 0)
+                                message = message + ", ";
+                        else
+                                message = "at the center point of Jupiter.";
+
+                        if (y[i] != 0)
+                                message = message + Math.abs(y[i]) +
+                                                    " Jovian radii " +
+                                                    Y_Direction(y[i]);
+
+                        // So long as one of the coordinate-pair are not
+                        // at the center, reference the location from the
+                        // center.
+                        //
+                        if (x[i] != 0 || y[i] != 0)
+                                message = message + " of Jupiter's center";
+
+                        // In transit or behind Jupiter?
+                        //
+                        if (in_transit(i)) message += " (in transit).";
+                        else
+                        if (behind_planet(i)) message += " (behind planet).";
+                        else
+                                message += ".";
+
+                        moonClicked = true;
+                        break;
+                      }
+                }
+
+                if (!moonClicked)
+                // Jupiter?
+                //
+                if (X >= center_x - Jradius && X <= center_x + Jradius &&
+                    Y >= center_y - Jradius && Y <= center_y + Jradius)
+                {
+                        message = "Jupiter: " +
+                                  delta + " AU from Earth   " +
+                                  rr + " AU from Sun   " +
+                                  "(1 AU = 149,598,023 km)";
+                }
+
+                // Show information in status bar.
+                //
+                getAppletContext().showStatus(message);
+        }
+
+        public boolean handleEvent(Event evt)
+        {
+        // Handle events for this applet.
+        //
+        String lab;
+        AboutBox about;
+
+                switch(evt.id)
+                {
+                    case Event.ACTION_EVENT:
+                        if (evt.target instanceof Button)
+                         {
+                            lab = (String)evt.arg;
+                            if (lab.equals("About..."))
+                           {
+                                about = new AboutBox("Galilean Moons");
+                                return true;
+                            }
+                            else
+                                return false;
+                        }
+                    break;
+
+                    case Event.MOUSE_DOWN:
+                        showObjectInfo(evt.x,evt.y);
+                        return true;
+                }
+
+                return super.handleEvent(evt);
+        }
+
+        private Date getUTCDate(Date theDate)
+        {
+        // Return the Universal Time Coordinated equivalent
+        // of the specified date.
+        //
+        // Note: I should be able to use the Date object's UTC()
+        //       method but I found this to give erroneneous results
+        //       by adding N hours rather than subtracting, for example,
+        //       to adjust for timezone.
+        //
+        double tz;
+
+                // Get timezone offset and convert from minutes to hours.
+                //
+                tz = theDate.getTimezoneOffset() / 60.0;
+                if (tz < 0) timeZoneOffset = (int)Math.floor(tz);
+                else
+                if (tz > 0) timeZoneOffset = (int)Math.ceil(tz);
+
+                return new Date(theDate.getTime() +
+                                timeZoneOffset * MILLISECONDS_PER_HOUR);
+        }
+
+        private boolean in_greg_cal(int d,int m, int y)
+        {
+        // Is the specified date in the Gregorian Calendar
+        // which started the day after Oct 4 1582. This
+        // day was in fact Oct 15 1582.
+        //
+                if (y > 1582) return true;
+                else if (y == 1582 && m > 10) return true;
+                else if (y == 1582 && m == 10 && d >= 15) return true;
+                else return false;
+        }
+
+        private boolean is_leap(int day,int month,int year)
+        {
+        // Is it a leap year? Only if the year is divisible by 4 but
+        // not by 100, except if it's divisible by 400. The latter
+        // assumes that the date is in the Gregorian Calendar. If it's
+        // in the Julian Calendar, divisiblity by 4 is the sole criteria
+        // for leap-ness.
+        //
+        // Note: no point in checking for Gregorian calendar dates
+        //       in this application because Java dates restrict us
+        //       to years >= 1900.
+        //
+                if (in_greg_cal(day,month,year))
+                        return (year % 4 == 0 &&
+                                year % 100 != 0) ||
+                                year % 400 == 0;
+                else
+                        return year % 4 == 0;
+        }
+
+        private boolean legal_date(int day,int month,int year)
+        {
+        // Is this a legal month day taking leap years into account?
+        //
+        int[] month_days = { 31,28,31,30,31,30,31,31,30,31,30,31 };
+
+                if (year < 1900) return false;  // because of Java dates.
+                if (month < 1 || month > 12) return false;
+                if (is_leap(day,month,year)) month_days[1] += 1;
+                return (day >= 1 && day <= month_days[month-1]);
+        }
+
+        private double JulianDay(int d,int m,int y) 
+        {
+        // Determine the Julian Day for any year, even prior to
+        // the start of the Gregorian Calendar.
+        //
+        // Algorithm taken from "Astronomical Algorithms", 1991,
+        // Jean Meeus, ch 7.
+        //
+        int a,b;
+        double jd;
+
+                if (m == 1 || m == 2) { y--; m += 12; }
+                a = (int)Math.floor(y/100);
+                if (in_greg_cal(d,m,y))
+                        b = 2 - a + (int)Math.floor(a/4);
+                else
+                        b = 0;
+                jd = Math.floor(365.25*(y+4716)) +
+                     Math.floor(30.6001*(m+1)) +
+                     d + b - 1524.5;
+                return jd;
+        }
+
+        private double decimal_hours(int hrs,int mins,int secs)
+        {
+        // Return decimal hours.
+
+                return hrs + mins/60.0 + secs/3600.0;
+        }
+
+        private double in_range(double n)
+        {
+        // Ensure n is in the range 0..360 degrees.
+        //
+        double degs;
+
+                if (n<0) 
+                        degs = 360 + (n % 360);
+                else
+                if (n>360)
+                        degs = n % 360;
+                else
+                        degs = n;
+
+                return degs;
+        }
+
+        private double sinh(double x)
+        {
+        // Return hyperbolic sine of x.
+
+                return (Math.exp(x) - Math.exp(-x)) / 2;
+        }
+
+        private void JovianEphemeris(double JDE)
+        {
+        // Calculate circumstances of Jupiter at JDE.
+        // Low accuracy method.
+        //
+        double sin_of_psi, w1, w2, DS, lambda;
+
+                // days since 2000 January 1, 12h.
+                d = JDE - 2451545.0;
+
+                // Argument for long-period term in motion of Jupiter.
+                V = in_range(172.74 + 0.00111588*d); 
+
+                // Mean anomalies of Earth and Jupiter.
+                M = in_range(357.529 + 0.9856003*d);
+                N = 20.02 + 0.0830853*d + 0.329*Math.sin(V/radconv);
+
+                // Difference between mean heliocentric
+                // longitudes of Earth and Jupiter.
+                J = in_range(66.115+0.9025179*d-0.329*Math.sin(V/radconv));
+
+                // Equations of the center of Earth and Jupiter.
+                A = 1.915*Math.sin(M/radconv)+0.02*Math.sin((2*M)/radconv);
+                B = 5.555*Math.sin(N/radconv)+0.168*Math.sin((2*N)/radconv);
+                K=J+A-B;
+
+                // Radius vector of Earth.
+                R = 1.00014 - 0.01671*Math.cos(M/radconv) -
+                    0.00014*Math.cos((2*M)/radconv);
+
+                // Radius vector of Jupiter.
+                rr = 5.20872 - 0.25208*Math.cos(N/radconv) -
+                     0.00611*Math.cos((2*N)/radconv);
+
+                // Earth-Jupiter distance.
+                delta = Math.abs(Math.sqrt(rr*rr + R*R -
+                                           2*rr*R*Math.cos(K/radconv)));
+
+                // Phase angle (Earth-Jupiter-Sun).
+                sin_of_psi = (R/delta)*Math.sin(K/radconv);
+                psi = sinh(sin_of_psi)*radconv;
+
+                // Longitudes of central meridian in systems I and II.
+                w1 = in_range(210.98 + 877.8169088*(d-(delta/173)) +
+                              psi - B);
+                w2 = in_range(187.23 + 870.1869088*(d-(delta/173)) +
+                              psi - B);
+
+                // Heliocentric longitude.
+                lambda = 34.35 + 0.083091*d + 0.329*Math.sin((V+B)/radconv);
+
+                // Planetocentric declination.
+                DS = 3.12*Math.sin((lambda+42.8)/radconv);
+                DE = DS - 2.22*Math.sin(psi/radconv)*
+                          Math.cos((lambda+22)/radconv);
+                DE = DE - 1.3*((rr-delta)/delta)*
+                          Math.sin((lambda-100.5)/radconv);
+        }
+
+        private void AngleFromInfConj()
+        {
+        // Calculate angle from inferior conjunction.
+        //
+        double deltaterm;
+
+                deltaterm = d - (delta/173);
+
+                first_u1 = in_range(163.8067 + 203.4058643*deltaterm +
+                           psi - B);
+                first_u2 = in_range(358.4108 + 101.2916334*deltaterm +
+                           psi - B);
+                first_u3 = in_range(5.7129 + 50.2345179*deltaterm +
+                           psi - B);
+                first_u4 = in_range(224.8151 + 21.4879801*deltaterm +
+                           psi - B);
+
+                // Correct for mutual perturbations.
+                //
+                G = 331.18 + 50.310482*deltaterm;
+                H = 87.4 + 21.569231*deltaterm;
+
+                u1 = first_u1 + 0.473*
+                                Math.sin((2*(first_u1-first_u2))/radconv);
+                u2 = first_u2 + 1.065*
+                                Math.sin((2*(first_u2-first_u3))/radconv);
+                u3 = first_u3 + 0.165*Math.sin(G/radconv);
+                u4 = first_u4 + 0.841*Math.sin(H/radconv);
+        }
+
+        private void DistFromCenter()
+        {
+        // Calculate distance of each satellite from
+        // center of Jupiter.
+        // 
+                r1 = 5.9073 - 0.0244*
+                              Math.cos((2*(first_u1-first_u2))/radconv);
+                r2 = 9.3991 - 0.0882*
+                              Math.cos((2*(first_u2-first_u3))/radconv);
+                r3 = 14.9924 - 0.0216*Math.cos(G/radconv);
+                r4 = 26.3699 - 0.1935*Math.cos(H/radconv);
+        }
+
+        private void calc_x_y(int n)
+        {
+        // Calculate rectangular coordinates 
+        // of one of the four Galilean satellites.
+        //
+        double r,u;
+
+                switch(n)
+                {
+                        case 1 : r=r1; u=u1;
+                                 break;
+
+                        case 2 : r=r2; u=u2;
+                                 break;
+
+                        case 3 : r=r3; u=u3;
+                                 break;
+
+                        case 4 : r=r4; u=u4;
+                                 break;
+
+                        default: r=-1; u=-1;
+                }
+
+                if (r != -1 && u != -1)
+                {
+                        x[n-1] = r*Math.sin(u/radconv);
+                        y[n-1] = -r*Math.cos(u/radconv)*Math.sin(DE/radconv);
+                }
+        }
+
+        private boolean moving_east(int moon)
+        {
+        // Return true if moon is moving east.
+        // Note: it is assumed that the period
+        // between the calculation of oldx[n]
+        // and x[n] is sufficient to have made
+        // a difference in position.
+        //
+        // The larger the x value, the further
+        // west the moon is, hence we ask whether
+        // the last position is further west than
+        // the current position.
+        //
+                if (oldx[moon] > x[moon])
+                        return true;
+                else
+                        return false;
+        }
+
+        private boolean moving_west(int moon)
+        {
+        // Return true if moon is moving west.
+        // Note: it is assumed that the period
+        // between the calculation of oldx[n]
+        // and x[n] is sufficient to have made
+        // a difference in position.
+        //
+        // The larger the x value, the further
+        // west the moon is, hence we ask whether
+        // the last position is further east than
+        // the current position.
+        //
+                if (oldx[moon] < x[moon])
+                        return true;
+                else
+                        return false;
+        }
+
+        private boolean in_disk_region(int moon)
+        {
+        // Return true or false according to whether
+        // a satellite is in the region of the disk
+        // of Jupiter.
+        //
+        // What we're asking here is, in order:
+        //
+        //      1. Is the moon's right tip >= left Jovian limb.
+        //      2. Is the moon's left tip <= right Jovian limb.
+        //      3. Is the moon's lower tip >= top Jovian limb.
+        //      4. Is the moon's upper tip <= bottom Jovian limb.
+        //
+        // All we're figuring out here is whether the moon should be
+        // drawn before Jupiter in case it may be obscured partly or
+        // wholly.
+        //
+           if (center_x - x[moon]*Jradius + Mradius >= center_x - Jradius &&
+               center_x - x[moon]*Jradius - Mradius <= center_x + Jradius &&
+               center_y - y[moon]*Jradius + Mradius >= center_y - Jradius &&
+               center_y - y[moon]*Jradius - Mradius <= center_y + Jradius)
+                   return true;
+           else
+                   return false;
+        }
+
+        private boolean behind_planet(int moon)
+        {
+        // Return true or false according to whether
+        // a satellite is partially or fully behind
+        // the disk of Jupiter.
+        //
+                if (in_disk_region(moon) && moving_east(moon))
+                        return true;
+                else
+                        return false;
+        }
+
+        private boolean in_transit(int moon)
+        {
+        // Return true or false according to whether
+        // a satellite is in transit across the disk
+        // of Jupiter.
+        //
+                if (in_disk_region(moon) && moving_west(moon))
+                        return true;
+                else
+                        return false;
+        }
+}
+
+class AboutBox extends Frame
+{
+private Button okay;
+private TextArea ta;
+
+        AboutBox(String title)
+        {
+                // Call superclass constructor.
+                //
+                super(title);
+
+                // Use borderlayout for this window.
+                //
+                setLayout(new BorderLayout());
+
+                // Add text labels, placing them on a new panel with
+                // gridlayout: 3 rows x 1 column.
+                //
+                Panel labelPanel = new Panel();
+                labelPanel.setLayout(new GridLayout(3,1));
+                labelPanel.add(new Label("Version 1.1", Label.CENTER));
+                labelPanel.add(new Label("by David Benn", Label.CENTER));
+                labelPanel.add(new Label("November 1996", Label.CENTER));
+                add("North",labelPanel);
+
+                // Add scrollable text.
+                //
+                ta = new TextArea(13,33);
+                ta.appendText("This Galilean satellite simulation shows\n");
+                ta.appendText("an edge-on view of the gas-giant Jupiter\n");
+                ta.appendText("and its four largest moons: Io, Europa,\n");
+                ta.appendText("Ganymede, and Callisto as they would\n");
+                ta.appendText("appear through a small telescope. These\n");
+                ta.appendText("moons were discovered by Galileo in\n");
+                ta.appendText("1610.\n\n");
+
+                ta.appendText("The display updates once a minute. Click\n");
+                ta.appendText("Jupiter or one of its moons to get current\n");
+                ta.appendText("information about each in the browser's\n");
+                ta.appendText("status bar. It is possible for one or\n");
+                ta.appendText("more moons to be behind Jupiter or in\n");
+                ta.appendText("transit across its disk.\n\n");
+
+                ta.appendText("The low-accuracy method (sufficient for\n");
+                ta.appendText("current purposes) from Jean Meeus'\n");
+                ta.appendText("\"Astronomical Algorithms\", ch 43 was\n");
+                ta.appendText("used as the basis for this applet.\n\n");
+
+                ta.appendText("Note that no attempt has been made to\n");
+                ta.appendText("depict actual Jovian atmospheric detail.\n");
+                ta.appendText("Nor are Jupiter and its moons exactly\n");
+                ta.appendText("to scale.\n\n");
+
+                ta.appendText("Be aware that since this applet takes the\n");
+                ta.appendText("current time from your computer's clock,\n");
+                ta.appendText("you need to ensure that the correct, date,\n");
+                ta.appendText("time, and timezone have been set.\n\n");
+
+                ta.appendText("Future versions will add features such\n");
+                ta.appendText("as the ability to set the simulation for\n");
+                ta.appendText("any date and time, and vary the update\n");
+                ta.appendText("interval. Accuracy may also be improved.\n\n");
+
+                ta.appendText("Version 1.1 fixes a bug in which moons\n");
+                ta.appendText("were shown to be in transit when in fact\n");
+                ta.appendText("they were behind the planet!");
+
+                ta.setEditable(false);
+                add("Center",ta);
+
+                // Add a panel with a FlowLayout as the last element
+                // so that we can have a button which doesn't fill the
+                // whole last row!
+                //
+                Panel buttonPanel = new Panel();
+                buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+                okay = new Button("Okay");
+                buttonPanel.add(okay);
+                add("South",buttonPanel);
+
+                // Adjust size of window to be appropriate for components.
+                //
+                pack();
+
+                // Let there be light!
+                //
+                show();
+        }
+
+        public boolean action(Event evt, Object arg)
+        {
+        // Handle the okay button press.
+        //
+        String lab;
+
+                if (evt.target instanceof Button)
+                {
+                        lab = (String)arg;
+                        if (lab.equals("Okay"))
+                        {
+                                hide();
+                                dispose();
+                                return true;
+                        }
+                        else return false;
+                }
+                else return false;
+        }
+}
+</pre>
+</body>
+</html>

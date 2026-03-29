@@ -1,0 +1,282 @@
+<html>
+<head>
+  <title>OrbitViewer Invocation</title>
+  <link rel="stylesheet" href="ov.css" type="text/css">
+</head>
+<body id="docBody" onLoad="setupMenus()">
+ <script type="text/javascript" src="common_ov.js"></script>
+
+ <script type="text/javascript">
+
+  <!-- Hide the code from non-compliant browsers.
+
+  // Future:
+  //
+  // - Sanity check element field contents before applet invocation.
+  // - Permit other formats to be used to populate fields part from MPC,
+  //   in particular, unambiguous formats on MPC site.
+  // - Permit cookie expiry to be configured from web page.
+  // - Allow explicit deletion of popup menu items.
+  // - Another approach to this would be to modify the Java applet to
+  //   be amenable to being manipulated directly by ECMAScript code as
+  //   I've done elsewhere.
+  //
+  // dbenn@computer.org, June-October 2004, July 2006
+
+  // This function is intended to be invoked upon page load.
+  function setupMenus() {
+      //deleteCookie("asteroids");
+
+      // Populate asteroid popup menu.
+      var asteroidList = getCookie("asteroids");
+      if (asteroidList != null) {
+        var popupMenu = document.getElementById("asteroid_menu");
+        populateMenu(popupMenu, asteroidList.split(":"));
+        retrieveAsteroidValues();
+      }
+
+      //document.debug.text.value = getCookie("asteroids");
+  }
+
+  /*
+    Render the applet on the page, add the object to the
+    popup menu, and persist information about the object
+    as a cookie.
+  */
+  function invokeOrbitViewerForAsteroid(appletSize, elements) {
+    invokeOrbitViewer(appletSize, elements, "asteroids", "asteroid_menu");
+  }
+
+  function populateFieldsForAsteroid(mpcElements, elements) {
+
+      // Extract orbital elements from MPC formatted text
+      // and populate asteroid form fields.
+
+      // Get each line, skipping leading blank lines.
+      // IE sees such lines as having a length of one
+      // whereas for Mozilla the length is 0.
+      text = mpcElements.text.value;
+      lines = text.split("\n");
+      startLine = 0;
+      while (lines[startLine].length <= 1) {
+          startLine++;
+      }      
+      
+      elements.name.value = reformatName(lines[startLine]);
+
+      // Reformat epoch and store in form.
+      epochTokens = lines[startLine+1].split(whitespace);
+      elements.epoch.value = 
+          epochTokens[1] +
+          getMonthNumber(epochTokens[2]) + 
+          getTwoDigitDayNumber(epochTokens[3]);
+
+      // Extract simple key-value pairs.
+      elements.m.value = getFieldValue(lines[startLine+2], "M");
+      elements.e.value = getFieldValue(lines[startLine+5], "e");
+      elements.a.value = getFieldValue(lines[startLine+4], "a");
+      elements.peri.value = getFieldValue(lines[startLine+3], "Peri");
+      elements.node.value = getFieldValue(lines[startLine+4], "Node");
+      elements.incl.value = getFieldValue(lines[startLine+5], "Incl");
+
+      // Equinox: (YYYY.N)
+      eqnxTokens = lines[startLine+2].split(whitespace);
+      elements.eqnx.value = eqnxTokens[2].substr(1, 6);
+  }
+
+  // Populate fields with values retrieved from a cookie.
+  function retrieveAsteroidValues() {
+      var elements = document.asteroidElements;
+      var asteroidList = document.getElementById("asteroid_menu");
+      var asteroidName = asteroidList.options[asteroidList.selectedIndex].text;
+      var elementStr = getCookie(asteroidName);
+      //document.debug.text.value = elementStr;
+      elements.name.value = asteroidName;      
+      elements.epoch.value = getFieldValue(elementStr, "epoch");
+      elements.m.value = getFieldValue(elementStr, "m");
+      elements.e.value = getFieldValue(elementStr, "e", whitespace, true);
+      elements.a.value = getFieldValue(elementStr, "a");
+      elements.peri.value = getFieldValue(elementStr, "peri");
+      elements.node.value = getFieldValue(elementStr, "node");
+      elements.incl.value = getFieldValue(elementStr, "incl");
+      elements.eqnx.value = getFieldValue(elementStr, "eqnx");
+  }
+  // -->
+ </script>
+
+<h3>Dynamic invocation of Osamu Ajiki & Ron Baalke's
+<a href="http://www.astroarts.com/products/orbitviewer/">OrbitViewer</a> applet</h3>
+
+<table>
+ <tr>
+  <td>
+   <h4>
+  Rather than having to create the appropriate HTML for the
+  <a href="http://www.astroarts.com/products/orbitviewer/">OrbitViewer</a>
+  applet in a static web page, this page dynamically invokes
+  the applet near the end of the current page given input via 
+  a form. Moreover, orbital element text can be obtained from
+  a <a href="http://www.minorplanetcenter.net/iau/mpc.html">Minor Planet 
+  Centre</a> (MPC) web page and the form data populated automatically,
+  an example of which is given below. Object invocation also adds to
+  a popup menu for later retrieval of orbital elements. Browser
+  cookies are used to persist menu items with an expiry of 90 days.
+   </h4>
+  </td>
+  <td><a href="http://www.astroarts.com/products/orbitviewer/"><img src="../../images/orbitviewer-s.gif" width="125" height="125"></a></td>
+ </tr>
+</table>
+
+<hr>
+
+<table border=0>
+
+ <tr>
+  <table border=0>
+  <tr><td>
+   <form name="appletSize">
+    <table border=0>
+     <tr>
+      <th>Applet's Size</th>
+     </tr>
+     <tr>
+      <td><em>Width</em></td> 
+      <td><input type="text" name="width" value="600" size=20></td>
+     </tr>
+     <tr>
+      <td><em>Height</em></td> 
+      <td><input type="text" name="height" value="500" size=20></td>
+     </tr>
+    </table>
+   </form>
+   <!--
+  </td><td><img src="FMOLogo.gif"></img></td></tr>
+  -->
+  </table>
+ </tr>
+
+ <tr>
+  <table border=0>
+  <tr>
+   <th align="left">Asteroid's orbital elements</th>
+  </tr>   
+  <tr>
+   <td>
+    <form name="asteroidElements">
+     <table border=1>
+      <tr>
+       <td><em>Name</em></td> 
+       <td><input type="text" name="name" value="" size=20></td>
+      </tr>
+      <tr>
+       <td><em>Epoch</em></td> 
+       <td><input type="text" name="epoch" value="" size=20></td>
+      </tr>
+      <tr>
+       <td><em>M</em></td> 
+       <td><input type="text" name="m" value="" size=20></td>
+      </tr>
+      <tr>
+       <td><em>e</em></td> 
+       <td><input type="text" name="e" value="" size=20></td>
+      </tr>
+      <tr>
+       <td><em>a</em></td> 
+       <td><input type="text" name="a" value="" size=20></td>
+      </tr>
+      <tr>
+       <td><em>Peri</em></td> 
+       <td><input type="text" name="peri" value="" size=20></td>
+      </tr>
+      <tr>
+       <td><em>Node</em></td> 
+       <td><input type="text" name="node" value="" size=20></td>
+      </tr>
+     <tr>
+      <td><em>Incl</em></td> 
+      <td><input type="text" name="incl" value="" size=20></td>
+     </tr>
+     <tr>
+      <td><em>Eqnx</em></td> 
+      <td><input type="text" name="eqnx" value="" size=20></td>
+     </tr>
+     <tr>
+      <td>
+        <input type="button" value="Populate from MPC text"
+         onClick="populateFieldsForAsteroid(document.mpcOrbitalElements, document.asteroidElements)">
+      </td>
+      <td><input type="reset" value="Clear"></td>
+     </tr>
+     <tr>
+      <td>
+       <input type="button" value="Invoke Orbit Viewer" 
+        onClick="invokeOrbitViewerForAsteroid(document.appletSize, document.asteroidElements)">
+      </td>
+
+       <td>
+         <select id="asteroid_menu" onChange="retrieveAsteroidValues()">
+         </select>
+       </td>
+
+     </tr>
+    </table>
+   </form>
+  </td>
+
+ </tr>
+ </table>
+ </td></tr>
+ 
+</table>
+
+ <table border=0> 
+  <tr>
+   <th>
+    Orbital element text pasted from 
+    <a href="http://www.minorplanetcenter.net/mpec/K04/K04J69.html">IAU MPC
+    web site</a>, e.g. Vesta's as shown here.
+   </th>
+  </tr>
+  <tr><td>
+   <form name="mpcOrbitalElements">
+    <textarea name="text" rows=8 cols=75>
+    (4) Vesta
+Epoch 2003 Dec. 27.0 TT = JDT 2453000.5  (M-c)          Bowell
+M  15.64391              (2000.0)            P               Q
+n   0.27160711     Peri.  150.22064     -0.26925038     +0.95549918
+a   2.3614312      Node   103.93760     -0.90631861     -0.20906785
+e   0.0886425      Incl.    7.13329     -0.32571584     -0.20811525
+P   3.63           H    3.20          G   0.32
+    </textarea>
+   </form>
+  </td></tr>
+<!--
+  <tr><td>
+   <form name="debug">
+    <textarea name="text" rows=8 cols=75>
+    </textarea>
+   </form>
+  </td></tr>
+-->
+  <!-- A placeholder for the applet. -->
+  <tr><td id="applet_target_parent"><br id="applet_target"></td></tr>
+ </table>
+
+<hr>
+
+<h5>Tested against:<br>
+<ul>
+ <li>A random sampling of MPC orbital element text;</li>
+ <li>Internet Explorer version 6.0 on Windows 98 and Windows 2000;</li>
+ <li>Mozilla version 1.6 on Windows 2000 and version 1.7b on Windows 98. The page is messed up after applet insertion, but scolling the window corrects this.</li>
+</ul>
+<p><font color="red">Note that the popup menu functionality is currently broken.</font></p>
+<p>For more ECMAScript adventures, see
+<a href="http://members.ozemail.com.au/~djbenn/ECMAScript/">here</a>.</p>
+</h5>
+<hr>
+<A HREF="../../index.html"><IMG SRC="../../icons/HomeBut.GIF"></a>
+<br>
+Created by David Benn: <A HREF="mailto:dbenn@computer.org">dbenn@computer.org</a>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<html>
+<head>
+<title>
+Terrestrial Impact Crater Dimensions.
+</title>
+ <script language = "JavaScript">
+  <!-- Hide the code from non-compliant browsers.
+  /* Note: values are global to a JavaScript block unless explicitly scoped.
+   *
+   * The same variable names have been used as the original BASIC program for 
+   * ease of comparison.
+   */
+  PI=3.14159;
+  CR1=18;
+  CD1=9;
+
+  function craterCalculations(impactor) {
+    calcImpactor(impactor);
+    calcCrater(impactor);
+  }
+
+  function calcImpactor(impactor) {
+    // Get parameters from impactor form.
+    ID = impactor.ID.value;
+    IR = impactor.IR.value;
+    IK = impactor.IK.value;
+    GA = impactor.GA.value;
+
+    // Calculate impactor values.
+    IV=IK*1000;
+    VI=PI*ID*ID*ID/6;
+    MI=IR*VI;
+    KE=.5*MI*IV*IV;
+    KT=KE/4.2E+12; //impactor KE in kT TNT
+
+    // Display results.
+    impactor.volume.value = VI;
+    impactor.mass.value = MI;
+    impactor.energy_J.value = KE;
+    impactor.energy_kT.value = KT;
+
+    return KT;
+  }
+
+  function calcCrater(impactor) {
+    // Calculate crater values.
+    GF=Math.pow(Math.sin(GA/180*PI),.33);
+    CD=2*CR1*Math.pow(KT,.3)*GF;
+    CA=CD*1.25;
+    CZ=CD1*Math.pow(KT,.3)*GF;
+    CL=CZ*1.25;
+    CV=.5*PI*CD*CD/4*CZ;
+    CE=2.15*CD;
+
+    // Display results in form fields.
+    impactor.actual_diam.value = CD;
+    impactor.apparent_diam.value = CA;
+    impactor.actual_depth.value = CZ;
+    impactor.apparent_depth.value = CL;
+    impactor.target_removed.value = CV;
+    impactor.ejecta_spread.value = CE;
+  }
+  // -->
+ </script>
+</head>
+
+<h3>Terrestrial Impact Crater Dimensions. Adapted from BASIC code in a 
+November 1996 Sky & Telescope article.
+See Sky & Telescope's <a href="http://www.skyandtelescope.com/resources/software/3304911.html">BASIC listing page</a> for the original code.</h3>
+<p>
+<h5>Tested successfully against:<br>
+<ul>
+ <li>Netscape version 4.07 for Linux and 4.5 for Windows 95 and Macintosh</li>
+ <li>Internet Explorer version 4.0 for Windows 95 and 4.01 for Macintosh</li>
+</ul>
+</h5>
+
+<hr>
+
+<form name="impactor">
+ <p>
+  <table>
+   <tr><th align="left">Impactor Inputs</th></tr>
+   <tr>
+    <td>Impactor diameter (m)</td> 
+    <td><input type="text" name="ID" value="" size=15></td>
+   </tr>
+   <tr>
+    <td>Impactor density (kg/m<sup>3</sup>)</td>
+    <td><input type="text" name="IR" value="" size=15></td>
+   </tr>
+   <tr>
+    <td>Impactor velocity (km/s)</td>
+    <td><input type="text" name="IK" value="" size=15></td>
+   </tr>
+   <tr>
+    <td>Graze angle (deg. from horiz.)</td>
+    <td><input type="text" name="GA" value="" size=15></td>
+   </tr>
+  </table>
+  </p>
+
+  <! Pass this form to the calculation function.>
+  <input type="button" value="Calculate" 
+  onClick="craterCalculations(document.impactor)">
+
+  <p>
+  <table>
+  <tr>
+  <td>
+   <table>
+   <tr><th align="left">Impactor</th></tr>
+   <tr>
+    <td>Volume (m<sup>3</sup>)</td>
+    <td><input type="text" name="volume" size=20></td>
+   </tr>
+   <tr>
+    <td>Mass (kg)</td>
+    <td><input type="text" name="mass" size=20></td>
+   </tr>
+   <tr>
+    <td>Kinetic Energy (Joules)</td>
+    <td><input type="text" name="energy_J" size=20></td>
+   </tr>
+   <tr>
+    <td>Kinetic Energy (Kilotons of TNT)</td>
+    <td><input type="text" name="energy_kT" size=20></td>
+   </tr>
+   </table>
+  </td>
+  <td>
+   <table>
+   <tr><th align="left">Crater</th></tr>
+   <tr>
+    <td>Actual Diameter (m)</td>
+    <td><input type="text" name="actual_diam" size=20></td>
+   </tr>
+   <tr>
+    <td>Apparent Diameter (m)</td>
+    <td><input type="text" name="apparent_diam" size=20></td>
+   </tr>
+   <tr>
+    <td>Actual Depth (m)</td>
+    <td><input type="text" name="actual_depth" size=20></td>
+   </tr>
+   <tr>
+    <td>Apparent Depth (m)</td>
+    <td><input type="text" name="apparent_depth" size=20></td>
+   </tr>
+   <tr>
+    <td>Target Removed (m<sup>3</sup>)</td>
+    <td><input type="text" name="target_removed" size=20></td>
+   </tr>
+   <tr>
+    <td>Ejecta Spread (m)</td>
+    <td><input type="text" name="ejecta_spread" size=20></td>
+   </tr>
+   </table>
+  </td>
+  </tr>
+  </table>
+  </p>
+</form>
+<hr>
+<A HREF="../index.html"><IMG SRC="../icons/HomeBut.GIF"></a> 
+</body>
+</html>
+

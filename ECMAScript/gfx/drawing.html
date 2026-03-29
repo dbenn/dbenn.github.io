@@ -1,0 +1,110 @@
+<html>
+ <head>
+  <script language="JavaScript">
+   <!-- Hide code from non-compliant browsers.
+
+   // Draw random lines in the specified Drawer applet.
+   function randomLine(drawer) {
+    for (i=1;i<=50;i++) {
+     drawer.setColor(Math.random()*255, Math.random()*255, Math.random()*255);
+     drawer.drawLine(Math.random()*200, Math.random()*200, 
+                     Math.random()*200, Math.random()*200);
+    }		     
+   }
+
+   // Plot x = kx^2-1 in the specified Drawer applet.
+   function kxChaos(drawer, k) {
+     var x,ampl,i,lastI,lastAmpl;
+     drawer.clear();
+     x = 0.1;
+     lastI = 0;
+     lastAmpl = 50;
+     for (i=0;i<=300;i+=4) {
+       x = k*x*x-1;
+       ampl = x*25+50;
+       drawer.drawLine(lastI,lastAmpl,i,ampl);
+       lastI = i;
+       lastAmpl = ampl;
+     }
+   }
+   // -->
+  </script>
+ </head>
+ <body>
+  <h3>Examples of ECMAScript using a Java drawing applet</h3>
+  <p>
+  <h5>Tested successfully against:<br>
+  <ul>
+   <li>Netscape version 4.07 for Linux and 4.5 for Windows 95 and 
+       Macintosh</li>
+   <li>Internet Explorer version 4.0 for Windows 95</li>
+  </ul>
+  <p>
+  <h5>Note that these examples do not seem to work with Macintosh Internet 
+      Explorer (tested up to version 4.5). This may be a configuration 
+      problem on my part.
+  </h5>
+
+  <center>
+  <hr>
+
+  <h3>A simple test</h3>
+
+  <table border=1>
+   <tr>
+    <td>
+      <APPLET CODE="Drawer.class" NAME="testDrawer" WIDTH=200 HEIGHT=200>
+      </APPLET>
+    </td>
+   </tr>
+  </table>
+
+  <P>
+
+  <FORM NAME="testForm">
+   <INPUT TYPE="button" VALUE="Clear"
+    onClick="document.testDrawer.clear()">
+
+   <INPUT TYPE="button" VALUE="Random"
+    onClick="randomLine(document.testDrawer)">
+
+   <P>
+
+   x1: <INPUT TYPE="text" SIZE="5" NAME="x1">
+   y1: <INPUT TYPE="text" SIZE="5" NAME="y1">
+   x2: <INPUT TYPE="text" SIZE="5" NAME="x2">
+   y2: <INPUT TYPE="text" SIZE="5" NAME="y2">
+   <INPUT TYPE="button" VALUE="Plot"
+    onClick="document.testDrawer.drawLine(parseInt(document.testForm.x1.value),
+				        parseInt(document.testForm.y1.value),
+					parseInt(document.testForm.x2.value),
+					parseInt(document.testForm.y2.value))">
+  </FORM>
+
+  <hr>
+
+  <h3>Chaos from a simple equation: x = kx<sup>2</sup>-1</h3>
+
+  <table border=1>
+   <tr>
+    <td>
+      <APPLET CODE="Drawer.class" NAME="kxDrawer" WIDTH=300 HEIGHT=100>
+      </APPLET>
+    </td>
+   </tr>
+  </table>
+
+  <P>
+
+  <FORM NAME="kxForm">
+   k: <INPUT TYPE="text" SIZE="5" NAME="k"> (eg. 0.5, 0.75, 2)
+   <INPUT TYPE="button" VALUE="Plot"
+    onClick="kxChaos(document.kxDrawer, document.kxForm.k.value)">
+  </FORM>
+  </center>
+
+  <HR>
+  <P>
+  <A HREF="../../index.html"><IMG SRC="../../icons/HomeBut.GIF"></a> 
+ </body>
+</html>

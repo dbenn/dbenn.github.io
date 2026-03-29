@@ -1,0 +1,134 @@
+Date: Thu, 16 Sep 1999 18:54 -0400
+From: Mark Zimmermann <z@his.com>
+To: Little Lisp <LittleLisp@onelist.com>
+X-Mailer: SimpleMail/3.2.5d1
+Mailing-List: list LittleLisp@onelist.com; contact LittleLisp-owner@onelist.com
+Delivered-To: mailing list LittleLisp@onelist.com
+List-Unsubscribe: <mailto:LittleLisp-unsubscribe@ONElist.com>
+Reply-to: LittleLisp@onelist.com
+Subject: [LittleLisp] ^zrooms.lisp
+X-Rcpt-To: <dbenn@camtech.net.au>
+X-DPOP: DPOP Version 2.5g
+
+From: Mark Zimmermann <z@his.com>
+
+;;; Below is a LittleLisp program to play around with
+;;; and perhaps critque (gently, pls!) ... it runs on my eMate
+;;; under LittleLisp 0.9c ... take this message, put it in its own
+;;; folder in Notes, and LOAD from the LL prompt ... then
+;;; evaluate (go) to move from "room" to "room" via button
+;;; clicks in dialog boxes
+
+;;; if you add other features please post here --- tnx!
+
+;;;;; ^z = Mark Zimmermann = http://www.his.com/~z/
+;;;;;  ^zhurnal = http://www.his.com/~z/guestbook/
+
+
+;; experiments in making rooms as objects, to walk among
+;; ^z - 1999.02.13-14 - tnx to David Benn!
+
+;;; a room responds to 'description 'exits 'links
+(defun make_room (desc ex lnks)
+  (lambda (msg)
+	(cond  ((eq? msg 'description) desc)
+		((eq? msg 'exits) ex)
+		((eq? msg 'links) lnks)
+		(T (display
+			(string "Room Error! --- bad msg = " msg))))))
+
+;; main function to let one go from room to room (& quit)
+(defun go ()
+    (while (not (eq? location 'quit))
+	(setq location (move))))
+
+(defun move ()
+    (nth (ask_move) (apply location '(links))))
+
+(defun ask_move ()
+    (apply 'ask (cons (string (apply location '(description)))
+		(apply location '(exits)))))
+
+(defun nth (n x)
+	(let* ((i n) (y x))
+	    (while (> i 1)
+		(setq i (- i 1))
+		(setq y (cdr y)))
+	    (car y)))
+
+;;;;;;;;;;
+
+(setq australia (make_room
+	"You find yourself on an island continent, cavorting with marsupial beasts.  A large sandy desert fills the center of the land; somebody has dropped a big rock here."
+	'("North" "East" "South" "Quit!")
+	'(japan new_zealand tasmania quit)))
+
+(setq japan (make_room
+	"The gentle click of black and white stones being played on a 19x19 board ... the scent of tea ... an arrangement of flowers ... a hot bath ... and a sharp sword swinging toward your neck."
+	'("NE" "SW" "South" "East" "Quit!")
+	'(alaska india australia hawaii quit)))
+
+(setq alaska (make_room
+	"Snow-capped mountains are illuminated by shifting curtains of the aurora borealis.  You lower your gaze to discover a caribou nibbling on your neckerchief."
+	'("SouthWest" "South" "Quit!")
+	'(japan hawaii quit)))
+
+(setq hawaii (make_room
+	"A chain of volcanic islands pop up, one after another, as the plate drifts above a hot spot in the mantle.  Pineapples and military bases are juxtaposed with surfers and astronomical observatories."
+	'("North" "West" "SW" "Quit!")
+	'(alaska japan new_zealand quit)))
+
+(setq new_zealand (make_room
+	(apply 'string (repeat 30 "Sheep! "))
+	'("NE" "West" "SW" "Quit!")
+	'(hawaii australia tasmania quit)))
+
+(setq tasmania (make_room
+	"You are on an island with devilish critters of cartoon fame, but otherwise not much mind share in the world consciousness."
+	'("North" "NorthEast" "South" "Quit!")
+	'(australia new_zealand antarctica quit)))
+
+(setq antarctica (make_room
+	"You feel deathly cold!  Penguins form a dotted line around the edge of your field of view; your compass spins wildly, and all directions seem the same to you."
+	'("North" "North" "North" "Quit!")
+	'(africa india tasmania quit)))
+
+(setq africa (make_room
+	"Oppressive heat, oppressive humidity, and oppressive governments beat against your senses as you seek the sources of the world's longest river."
+	'("East" "South" "Quit!")
+	'(india antarctica quit)))
+
+(setq india (make_room
+	"Teeming masses fill the subcontinent and the theatres in search of enlightenment, or if not that, entertainment."
+	'("East" "West" "South" "Quit!")
+	'(japan africa antarctica quit)))
+
+
+;; initialization ... for now, all that needs to be done is
+;; reset the traveler's location
+(defun reset ()
+	(setq location 'australia))
+
+(reset)
+
+(display "evaluate (go) to play; evaluate (reset) to start over")
+
+
+;; ^z
+
+
+
+
+
+Best,
+    ^z = Mark Zimmermann = z@his.com = http://www.his.com/z
+             ^zhurnal = http://www.his.com/z/guestbook
+
+--------------------------- ONElist Sponsor ----------------------------
+
+  New!!  Free E-mail @mail.com, @usa.com, @engineer.com and more!
+Mail.com makes it easy to set up a free, personalized e-mail address
+           that you can access anytime and anywhere.
+                http://www.onelist.com/ad/mailcom1
+
+------------------------------------------------------------------------

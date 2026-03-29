@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+  <channel>
+    <title>ASCOM-Talk at Yahoo! Groups</title>
+    <link>http://groups.yahoo.com/group/ASCOM-Talk/</link>
+    <description>ASCOM Initiative Discussion List</description>
+
+    <item>
+      <title>Re: ASCOM dome questions</title>
+      <pubDate>Wed, 15 Jun 2005 04:03:03 GMT</pubDate>
+      <author>Douglas B. George</author>
+      <link>http://groups.yahoo.com/group/ASCOM-Talk/message/7891</link>
+      <guid isPermaLink="true">http://groups.yahoo.com/group/ASCOM-Talk/message/7891</guid>
+      <description>John, Hmmm... maybe option 3(a)... have a user-configurable option for it. The</description>
+    </item>
+    <item>
+      <title>Re: Starry Night C++ code and licensing</title>
+      <pubDate>Wed, 15 Jun 2005 02:27:16 GMT</pubDate>
+      <author>Bob Denny</author>
+      <link>http://groups.yahoo.com/group/ASCOM-Talk/message/7890</link>
+      <guid isPermaLink="true">http://groups.yahoo.com/group/ASCOM-Talk/message/7890</guid>
+      <description>Michel -- Writing Windows objects in C++ is difficult, on the order of writing</description>
+    </item>
+    <item>
+      <title>Re: ASCOM dome questions</title>
+      <pubDate>Wed, 15 Jun 2005 02:02:20 GMT</pubDate>
+      <author>John Smith</author>
+      <link>http://groups.yahoo.com/group/ASCOM-Talk/message/7889</link>
+      <guid isPermaLink="true">http://groups.yahoo.com/group/ASCOM-Talk/message/7889</guid>
+      <description>Hi Doug, Thanks.  The beta worked fine! On the other issue, I choose door #3</description>
+    </item>
+    <item>
+      <title>Re: telescope API</title>
+      <pubDate>Tue, 14 Jun 2005 20:49:46 GMT</pubDate>
+      <author>Chris Rowland</author>
+      <link>http://groups.yahoo.com/group/ASCOM-Talk/message/7888</link>
+      <guid isPermaLink="true">http://groups.yahoo.com/group/ASCOM-Talk/message/7888</guid>
+      <description>... Yes, there is a sync function in the Celestron driver. Use the very latest</description>
+    </item>
+    <item>
+      <title>Re: Beginner with Ascom driver</title>
+      <pubDate>Tue, 14 Jun 2005 20:47:40 GMT</pubDate>
+      <author>Chris Rowland</author>
+      <link>http://groups.yahoo.com/group/ASCOM-Talk/message/7887</link>
+      <guid isPermaLink="true">http://groups.yahoo.com/group/ASCOM-Talk/message/7887</guid>
+      <description>... Look in the Celestron Driver sources - RegisterCelestron.vbs Chris</description>
+    </item>
+    <item>
+      <title>Re: Starry Night C++ code and licensing</title>
+      <pubDate>Tue, 14 Jun 2005 17:53:06 GMT</pubDate>
+      <author>Michel Meunier</author>
+      <link>http://groups.yahoo.com/group/ASCOM-Talk/message/7886</link>
+      <guid isPermaLink="true">http://groups.yahoo.com/group/ASCOM-Talk/message/7886</guid>
+      <description>... Sorry, I have found the solution (download the SDK of starryNight). But</description>
+    </item>
+    <item>
+      <title>Re: Starry Night C++ code and licensing</title>
+      <pubDate>Tue, 14 Jun 2005 17:37:47 GMT</pubDate>
+      <author>Michel Meunier</author>
+      <link>http://groups.yahoo.com/group/ASCOM-Talk/message/7885</link>
+      <guid isPermaLink="true">http://groups.yahoo.com/group/ASCOM-Talk/message/7885</guid>
+      <description>... Hello, I am unable to compile this driver, starrynight.exe.lib is missing! </description>
+    </item>
+    <item>
+      <title>Re: ASCOM dome questions</title>
+      <pubDate>Tue, 14 Jun 2005 17:36:41 GMT</pubDate>
+      <author>Douglas B. George</author>
+      <link>http://groups.yahoo.com/group/ASCOM-Talk/message/7884</link>
+      <guid isPermaLink="true">http://groups.yahoo.com/group/ASCOM-Talk/message/7884</guid>
+      <description>... I&apos;ll send you a &quot;beta test&quot; for item 1. As for #3, that would be outside</description>
+    </item>
+    <item>
+      <title>Re: Starry Night C++ code and licensing</title>
+      <pubDate>Tue, 14 Jun 2005 17:20:15 GMT</pubDate>
+      <author>Bob Denny</author>
+      <link>http://groups.yahoo.com/group/ASCOM-Talk/message/7883</link>
+      <guid isPermaLink="true">http://groups.yahoo.com/group/ASCOM-Talk/message/7883</guid>
+      <description>David -- It might be good to talk on the phone. 480-396-9700 -- Bob</description>
+    </item>
+    <item>
+      <title>Re: telescope API</title>
+      <pubDate>Tue, 14 Jun 2005 17:19:11 GMT</pubDate>
+      <author>Bob Denny</author>
+      <link>http://groups.yahoo.com/group/ASCOM-Talk/message/7882</link>
+      <guid isPermaLink="true">http://groups.yahoo.com/group/ASCOM-Talk/message/7882</guid>
+      <description>Petur -- I believe the limitation on syncing to the stars is with the Celestron</description>
+    </item>
+    <item>
+      <title>Re: ASCOM dome questions</title>
+      <pubDate>Tue, 14 Jun 2005 15:23:11 GMT</pubDate>
+      <author>John Smith</author>
+      <link>http://groups.yahoo.com/group/ASCOM-Talk/message/7881</link>
+      <guid isPermaLink="true">http://groups.yahoo.com/group/ASCOM-Talk/message/7881</guid>
+      <description>Hi Doug, Thanks.  Appreciate your fix to item 1.  Item 2 sounds like a dome</description>
+    </item>
+    <item>
+      <title>Re: telescope API</title>
+      <pubDate>Tue, 14 Jun 2005 14:13:49 GMT</pubDate>
+      <author>peturnielsen</author>
+      <link>http://groups.yahoo.com/group/ASCOM-Talk/message/7880</link>
+      <guid isPermaLink="true">http://groups.yahoo.com/group/ASCOM-Talk/message/7880</guid>
+      <description>does that mean you can sync on the stars when using the API - i know you cant</description>
+    </item>
+    <item>
+      <title>Starry Night C++ code and licensing</title>
+      <pubDate>Tue, 14 Jun 2005 12:44:21 GMT</pubDate>
+      <author>David Benn</author>
+      <link>http://groups.yahoo.com/group/ASCOM-Talk/message/7879</link>
+      <guid isPermaLink="true">http://groups.yahoo.com/group/ASCOM-Talk/message/7879</guid>
+      <description>Hello all First, thanks for the ASCOM initiative. Second, thanks to Space.com</description>
+    </item>
+    <item>
+      <title>Re: Beginner with Ascom driver</title>
+      <pubDate>Tue, 14 Jun 2005 11:47:58 GMT</pubDate>
+      <author>Tim Long</author>
+      <link>http://groups.yahoo.com/group/ASCOM-Talk/message/7878</link>
+      <guid isPermaLink="true">http://groups.yahoo.com/group/ASCOM-Talk/message/7878</guid>
+      <description>I&apos;m sure someone out there has a sample script. Unfortunately right now I am</description>
+    </item>
+    <item>
+      <title>Re: Beginner with Ascom driver</title>
+      <pubDate>Tue, 14 Jun 2005 08:37:01 GMT</pubDate>
+      <author>Michel Meunier</author>
+      <link>http://groups.yahoo.com/group/ASCOM-Talk/message/7877</link>
+      <guid isPermaLink="true">http://groups.yahoo.com/group/ASCOM-Talk/message/7877</guid>
+      <description>... Hello, Yes it would be a good idea to give an example with a script able to</description>
+    </item>
+
+  </channel>
+</rss>
+<!-- wr1.grp.scd.yahoo.com uncompressed/chunked Wed Jun 15 05:20:34 PDT 2005 -->

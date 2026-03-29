@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html lang="en">
+    <head>
+        <title>Iterated Function System</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>        
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+        <style>
+            ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                background-color: #333;
+            }
+
+            li a {
+                display: inline-block;
+                color: white;
+                text-align: left;
+                padding: 14px 16px;
+                text-decoration: none;
+            }
+
+            .ui-menu {
+                position: absolute;
+                width: 150px;
+                background-color: #f9f9f9;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            }
+
+            canvas {
+                padding-left: 0;
+                padding-right: 0;
+                margin-left: auto;
+                margin-right: auto;
+                display: block;
+            }
+        </style>
+    </head>
+    <body onload="init()">
+        <h3>
+            <a href="https://en.wikipedia.org/wiki/Iterated_function_system">
+                Iterated Function System</a> (IFS)
+        </h3>
+
+        <h4>
+            <a href="https://bitbucket.org/snippets/dbennau/op6n5">Ported</a> 
+            from
+            <a href="https://dbenn.wordpress.com/2014/05/04/basics-50th-early-micros-and-ace-basic-for-the-amiga/">ACE
+                BASIC</a>
+        </h4>
+
+        <ul id="menu">       
+            <li><div><a href="#" onmouseup="sierpinski()">Sierpinski Triangle</a></div></li>
+            <li><div><a href="#" onmouseup="square()">Square</a></div></li>
+            <li><div><a href="#" onmouseup="fern()">Fern</a></div></li>
+            <li><div><a href="#" onmouseup="tree1()">Tree #1</a></div></li>
+            <li><div><a href="#" onmouseup="tree2()">Tree #2</a></div></li>
+            <li><div><a href="#" onmouseup="sunflower()">Sunflower</a></div></li>
+            <li><div><a href="#" onmouseup="about()">About...</a></div></li>
+        </ul>
+
+        <canvas id="window1" width="640" height="400" 
+                style="border:3px solid #d3d3d3;">
+            Your browser does not support the HTML5 canvas tag.
+        </canvas>
+
+        <div id="about" class="dialog" title="About IFS">
+            <p>
+                Iterated Function System<br/>
+                David Benn (1994, 2016)
+            </p>
+            <p>
+                For Karen
+            </p>
+        </div>
+
+        <script>
+            var ifsColour;
+
+            // Window and menu functions
+
+            function init() {
+                $(".dialog").hide();
+
+                $("#menu").menu();
+
+                var canvas = $("#window1")[0];
+                var context = canvas.getContext("2d");
+                context.fillStyle = "black";
+                context.fillRect(0, 0, canvas.width, canvas.height);
+
+                ifsColour = "white";
+            }
+
+            // Menu item handlers
+
+            function sierpinski() {
+                var data = {};
+                data.n = 3;
+                data.xscale = 300;
+                data.yscale = 320;
+                data.xoffset = 20;
+                data.yoffset = -150;
+                data.a = [0.5, 0.5, 0.5];
+                data.b = [0, 0, 0];
+                data.c = [0, 0, 0];
+                data.d = [0.5, 0.5, 0.5];
+                data.e = [0, 1, 0.5];
+                data.f = [0, 0, 0.5];
+                data.p = [0.33, 0.66, 1];
+
+                setColor('white');
+                iterate(data);
+            }
+
+            function square() {
+                var data = {};
+                data.n = 4;
+                data.xscale = 300;
+                data.yscale = 320;
+                data.xoffset = 170;
+                data.yoffset = -160;
+                data.a = [0.5, 0.5, 0.5, 0.5];
+                data.b = [0, 0, 0, 0];
+                data.c = [0, 0, 0, 0];
+                data.d = [0.5, 0.5, 0.5, 0.5];
+                data.e = [0, 0.5, 0, 0.5];
+                data.f = [0, 0, 0.5, 0.5];
+                data.p = [0.25, 0.5, 0.75, 1];
+
+                setColor('blue');
+                iterate(data);
+            }
+
+            function fern() {
+                var data = {};
+                data.n = 4;
+                data.xscale = 75;
+                data.yscale = 36;
+                data.xoffset = 285;
+                data.yoffset = -180;
+                data.a = [0, 0.2, -0.15, 0.85];
+                data.b = [0, -0.26, 0.28, 0.04];
+                data.c = [0, 0.23, 0.26, -0.04];
+                data.d = [0.16, 0.22, 0.24, 0.85];
+                data.e = [0, 0, 0, 0];
+                data.f = [0, 1.6, 0.44, 1.6];
+                data.p = [0.01, 0.08, 0.15, 1];
+
+                setColor('green');
+                iterate(data);
+            }
+
+            function sunflower() {
+                var data = {};
+                data.n = 4;
+                data.xscale = 45;
+                data.yscale = 45;
+                data.xoffset = 240;
+                data.yoffset = -80;
+                data.a = [-0.3, -0.3, 0.02, 0];
+                data.b = [-0.6, -1, 0.01, 0.02];
+                data.c = [1.1, 1, 0, 0];
+                data.d = [0.11, 0.01, -0.2, 0];
+                data.e = [4, 4, 0, 0.01];
+                data.f = [0, 0, 0, 0.02];
+                data.p = [0.02, 0.97, 0.98, 1];
+
+                setColor('yellow');
+                iterate(data);
+            }
+
+            function tree1() {
+                var data = {};
+                data.n = 4;
+                data.xscale = 900;
+                data.yscale = 450;
+                data.xoffset = 320;
+                data.yoffset = -100;
+                data.a = [0, 0.1, 0.42, 0.42];
+                data.b = [0, 0, -0.42, 0.42];
+                data.c = [0, 0, 0.42, -0.42];
+                data.d = [0.5, 0.1, 0.42, 0.42];
+                data.e = [0, 0, 0, 0];
+                data.f = [0, 0.2, 0.2, 0.2];
+                data.p = [0.05, 0.2, 0.6, 1];
+
+                setColor('saddlebrown');
+                iterate(data);
+            }
+
+            function tree2() {
+                var data = {};
+                data.n = 4;
+                data.xscale = 280;
+                data.yscale = 140;
+                data.xoffset = 50;
+                data.yoffset = -130;
+                data.a = [0.195, 0.462, -0.058, -0.045];
+                data.b = [-0.488, 0.414, -0.07, 0.091];
+                data.c = [0.344, -0.252, 0.453, -0.469];
+                data.d = [0.443, 0.361, -0.111, -0.022];
+                data.e = [0.722, 0.538, 1.125, 0.863];
+                data.f = [0.536, 1.167, 0.185, 0.871];
+                data.p = [0.25, 0.5, 0.75, 1];
+
+                setColor('sienna');
+                iterate(data);
+            }
+
+            function about() {
+                $("#about").dialog();
+            }
+
+            // Graphics functions
+
+            function setColor(colour) {
+                ifsColour = colour;
+            }
+
+            function clear(canvas) {
+                var context = canvas.getContext("2d");
+                context.fillStyle = "black";
+                context.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            function pset(canvas, x, y) {
+                var context = canvas.getContext("2d");
+                context.fillStyle = ifsColour;
+                context.fillRect(x, y, 1, 1);
+            }
+
+            function iterate(data) {
+                var canvas = $("#window1")[0];
+
+                clear(canvas);
+
+                var x = 0;
+                var y = 0;
+                var i = 1;
+                var finished = false;
+
+                do {
+                    var k = 0;
+                    var r = Math.random();
+                    if (r <= data.p[0]) {
+                        k = 0;
+                    } else if (r <= data.p[1]) {
+                        k = 1;
+                    } else if (r <= data.p[2]) {
+                        k = 2;
+                    } else {
+                        k = data.n - 1;
+                    }
+
+                    var newx = data.a[k] * x + data.b[k] * y + data.e[k];
+                    var newy = data.c[k] * x + data.d[k] * y + data.f[k];
+
+                    x = newx;
+                    y = newy;
+
+                    var outX = x * data.xscale + data.xoffset;
+                    var outY = 200 - (y * data.yscale + data.yoffset);
+
+                    pset(canvas, outX, outY);
+
+                    i++;
+                } while (i <= 75000 && !finished);
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,65 @@
+X-From_: z@his.com Wed Mar  3 23:42 CST 1999
+Date: Wed, 3 Mar 1999 08:12 -0500
+From: Mark Zimmermann <z@his.com>
+Subject: LittleLisp 0.9b tests ;; experi 
+To: David Benn <dbenn@camtech.net.au>
+Cc: Mark Zimmermann (Hotmail) <controlz@hotmail.com>
+X-Mailer: Newton SimpleMail 3.2.3
+
+;; experiments with LittleLisp 0.9b functions & ideas
+;; ^z - 1999.03.02-03 - tnx to David Benn!
+
+;; randint --- random number from 1 through N
+(defun randint (N) (#random (#floor 1) (#floor N)))
+
+;; sort list L into ascending order
+(defun sort (L) (#sort L '< nil))
+
+;; NOTE! --- this sort "function" seems to destroy its
+;; argument list and replace it with the sorted result!
+
+;; generic D&D die roller --- i.e., (dice 3 6) produces "3d6"
+;; that is, sum of three six-sided dice
+(defun dice (n m) (apply '+ (map randint (repeat n m))))
+
+;; NOTE! --- still need '+ for apply to work --- + by itself
+;; without the quote gives an error
+
+;; special D&D roller for character generation, returns string
+;; of 3d6 with percentage die results appended to rolls of 18
+;; in D&D notation "18/01" through "18/99" and then "18/00"
+;; which is best possible super-man characteristic
+(defun d&d ()
+  (let* ((x (dice 3 6)))
+    (cond ((< x 18) (string x))
+      (t (let* ((y (randint 100)))
+        (cond ((< y 10) (string x "/0" y))
+          ((< y 100) (string x "/" y))
+          (t (string x "/00")))))))) 
+
+;; NOTE:  it would be nice to have the special form "if"
+;; to use instead of "cond" for some cases, perhaps
+
+
+;; roll up a D&D character --- return string of qualities
+;; ((some trickiness with apply & map of 'string!))
+(defun roll-D&D-character ()
+  (apply 'string (map 'string '("Strength = "
+    " ... Intelligence = "
+    " ... Wisdom = " " ... Dexterity = "
+    " ... Constitution = "
+    " ... Charisma = ") (repeat 6 (d&d)))))
+
+;; turn above into a dialog box
+(defun roll ()
+  (while (= 1 (ask (roll-D&D-character) "Roll Again" "OK"))
+    roll))
+
+;; to experiment with the above, evaluate: (roll)
+
+;; ^z = Mark Zimmermann = z@his.com
+
+^z = Mark Zimmermann
+     z@his.com
+          http://www.his.com/z
+

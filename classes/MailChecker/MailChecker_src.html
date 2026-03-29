@@ -1,0 +1,449 @@
+<html>
+<title>Source code for MailChecker.class</title>
+<body bgcolor=white>
+<pre>
+/*
+** POP3 client (TCP, port 110) for checking current mail status
+** for specified user. This program started out as a CGI written
+** in C.
+**
+** Be advised that given the restrictions imposed by Java security, this 
+** applet will only function correctly if the specified hostname is the 
+** same as the host on which the applet resides.
+**
+** Possible enhancements:
+**
+**   - parameterise width of all text fields.
+**   - parameterise POP client port number.
+**
+** v1: The Internet hostname was hardcoded for Vision Internet Services.
+** 
+** v2: The Internet hostname must be specified via the applet parameter 
+**     'hostname'.
+**
+** Author: David Benn
+**   Date: 18th-21st,25th-27th November 1996,
+**	   25th December 1997
+*/
+
+import java.net.Socket;
+import java.io.DataInputStream;
+import java.io.PrintStream;
+import java.io.IOException;
+import java.awt.Panel;
+import java.awt.Graphics;
+import java.awt.Color;
+import java.awt.TextField;
+import java.awt.Button;
+import java.awt.Event;
+import java.awt.Label;
+import java.awt.GridLayout;
+import java.awt.FlowLayout;
+import java.util.Date;
+
+public class MailChecker extends java.applet.Applet implements Runnable
+{
+private final int ONE_SECOND = 1000;    // 1000 milliseconds
+
+private Thread mailCheckerThread;
+private Panel localTimePanel;
+private Panel userFieldPanel, passwdFieldPanel, statusFieldPanel;
+private Panel messageCountFieldPanel, octetsFieldPanel;
+private Panel buttonPanel;
+private Label localTime, userLabel, passwdLabel;
+private Label messageCountLabel, octetsLabel, statusLabel;
+private TextField userField, passwdField, statusField;
+private TextField messageCountField, octetsField;
+private Button getMailStatus, clearFields;
+private String user, passwd;
+private String host;
+
+        public void init()
+        {
+                // 7 grids; 1 panel per grid.
+                //
+                setLayout(new GridLayout(7,1));
+
+                // Create and place GUI components in panels.
+                //
+                localTime = new Label((new Date()).toLocaleString(),Label.CENTER);
+                localTimePanel = new Panel();
+                localTimePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+                localTimePanel.add(localTime);
+
+                userLabel = new Label("Username: ");
+                userField = new TextField(8);
+                userFieldPanel = new Panel();
+                userFieldPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+                userFieldPanel.add(userLabel);
+                userFieldPanel.add(userField);
+
+                passwdLabel = new Label("Password: ");
+                passwdField = new TextField(8);
+                passwdField.setEchoCharacter('*');
+                passwdFieldPanel = new Panel();
+                passwdFieldPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+                passwdFieldPanel.add(passwdLabel);
+                passwdFieldPanel.add(passwdField);
+
+                messageCountLabel = new Label("Messages: ");
+                messageCountField = new TextField(8);
+                messageCountField.setEditable(false);
+                messageCountFieldPanel = new Panel();
+                messageCountFieldPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+                messageCountFieldPanel.add(messageCountLabel);
+                messageCountFieldPanel.add(messageCountField);
+
+                octetsLabel = new Label("Total bytes: ");
+                octetsField = new TextField(8);
+                octetsField.setEditable(false);
+                octetsFieldPanel = new Panel();
+                octetsFieldPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+                octetsFieldPanel.add(octetsLabel);
+                octetsFieldPanel.add(octetsField);
+
+                statusLabel = new Label("Status: ");
+                statusField = new TextField(30);
+                statusField.setEditable(false);
+                statusFieldPanel = new Panel();
+                statusFieldPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+                statusFieldPanel.add(statusLabel);
+                statusFieldPanel.add(statusField);
+
+                getMailStatus = new Button("Get Mail Status");
+                clearFields = new Button("Clear All Fields");
+                buttonPanel = new Panel();
+                buttonPanel.setLayout(new FlowLayout());
+                buttonPanel.add(getMailStatus);
+                buttonPanel.add(clearFields);
+
+                // Add the panels to the applet's container.
+                //
+                add(localTimePanel);
+                add(userFieldPanel);
+                add(passwdFieldPanel);
+                add(messageCountFieldPanel);
+                add(octetsFieldPanel);
+                add(statusFieldPanel);
+                add(buttonPanel);
+
+                // Username and password start out as empty.
+                //
+                user = "";
+                passwd = "";
+
+		// Get host name. Display error message if not present.
+		//
+		host = getParameter("hostname");
+		if (host == null) 
+			statusField.setText("No 'hostname' parameter.");
+        }
+
+        public void start()
+        {
+                if (mailCheckerThread == null)
+                {
+                        mailCheckerThread = new Thread(this);
+                        mailCheckerThread.start();
+                }
+        }
+
+        public void stop()
+        {
+                if (mailCheckerThread != null)
+                {
+                        mailCheckerThread.stop();
+                        mailCheckerThread = null;
+                }
+        }
+
+        public void run()
+        {
+        // Main loop.
+        //
+                while (true)
+                {
+                        // Update display.
+                        //
+                        repaint();
+
+                        // Sleep for set interval.
+                        //
+                        try
+                        {
+                                Thread.sleep(ONE_SECOND);
+                        }
+                        catch (InterruptedException e) {}
+                }
+        }
+
+        public void paint(Graphics g)
+        {
+                // Update the time display.
+                //
+                localTime.setText((new Date()).toLocaleString());
+        }
+
+        private boolean blank(String s)
+        {
+        // Return T or F indicating whether
+        // the specified string is blank, ie.
+        // null, empty (""), or whitespace.
+        //
+        char[] buf;
+
+                if (s == null) return true;
+                else
+		{
+			buf= s.toCharArray();
+                	if (s.equals("")) return true;
+                	else
+                	{
+                        	// Is any character non-whitespace?
+                        	//
+                        	for (int i=0;i<s.length();i++)
+                        	{
+                                	if (buf[i] > ' ') return false;
+                        	}
+
+                        	return true;
+			}
+                }
+        }
+
+        public boolean action(Event evt, Object thing)
+        {
+        // Handle applet's events.
+        //
+        String label, msgs, bytes, result;
+        POP3MailCheckClient pop3;
+
+                // Has a change been made to the name or
+                // password fields?
+                //
+                if (evt.target instanceof TextField)
+                {
+                        if (evt.target == userField)
+                                user = userField.getText();
+                        else
+                        if (evt.target == passwdField)
+                                passwd = passwdField.getText();
+
+                        return true;
+                }
+                else
+                // A button press?
+                //
+                if (evt.target instanceof Button)
+                {
+                     label = (String)thing;
+
+                     if (label.equals("Clear All Fields"))
+                     {
+                          // Clear all text fields.
+                          //
+                          userField.setText("");
+                          passwdField.setText("");
+                          messageCountField.setText("");
+                          octetsField.setText("");
+                          statusField.setText("");
+                     }
+                     else
+                     if (label.equals("Get Mail Status"))
+                     {
+                          // Clear message count and total bytes fields.
+                          //
+                          messageCountField.setText("");
+                          octetsField.setText("");
+
+                          // Go away and get the mail status.
+                          //
+                          user = userField.getText();
+                          passwd = passwdField.getText();
+
+                          if (!blank(user) && !blank(passwd) && !blank(host))
+                          {
+                              pop3 = new POP3MailCheckClient(user,
+                                                             passwd,
+							     host,
+                                                             statusField);
+                              result = pop3.getStatus();
+                              if (result.equals("OK"))
+                              {
+                                msgs = pop3.getMessageCount();
+                                bytes = pop3.getTotalBytes();
+                                messageCountField.setText(msgs);
+                                octetsField.setText(bytes);
+                                statusField.setText("Success.");
+                              }
+                              else
+                                statusField.setText(result);
+                          }
+                          else
+                                if (blank(user))
+                                        statusField.setText("No username.");
+                                else
+				if (blank(passwd))
+                                        statusField.setText("No password.");
+				else 
+					statusField.setText("No hostname.");
+                     }
+
+                     return true;
+                }
+
+                return false;
+        }
+}
+
+class POP3MailCheckClient
+{
+private final int port = 110;
+
+private Socket sock;
+private PrintStream sockOut;
+private DataInputStream sockIn;
+private String line;
+private String messages, octets, status = "OK";
+
+        POP3MailCheckClient(String user, String passwd, String host,
+			    TextField statusField)
+        {
+            try
+            {
+                statusField.setText("Connecting to " + host + "...");
+
+                // Create socket.
+                //
+                sock = new Socket(host, port);
+
+                // Create data input and output streams for socket.
+                //
+                sockOut = new PrintStream(sock.getOutputStream());
+                sockIn = new DataInputStream(sock.getInputStream());
+
+                // Expect: "+OK QUALCOMM Pop server...\r\n"
+                //
+                line = sockIn.readLine();
+                if (!line.substring(0,3).equals("+OK"))
+                {
+                        status = "Can't talk to POP3 daemon.";
+                        return;
+                }
+
+                // Send username to the server: "user <name>\r\n".
+                //
+                statusField.setText("Sending user name...");
+                sockOut.print("user " + user + "\r\n");
+
+                // Expect: "+OK Password required for <username>\r\n"
+                //
+                line = sockIn.readLine();
+                if (!line.substring(0,3).equals("+OK"))
+                {
+                        status = "Username or password incorrect.";
+                        return;
+                }
+
+                // Send: "pass <passwd>\r\n"
+                //
+                statusField.setText("Sending password...");
+                sockOut.print("pass " + passwd + "\r\n");
+
+                // Expect: "+OK <status-message>\r\n"
+                //
+                line = sockIn.readLine();
+                if (!line.substring(0,3).equals("+OK"))
+                {
+                        status = "Username or password incorrect.";
+                        return;
+                }
+
+                // Send: "stat\r\n"
+                //
+                statusField.setText("Looking for mail...");
+                sockOut.print("stat\r\n");
+
+                // Expect: "+OK <number-of-messages> <total-octets>\r\n"
+                //
+                line = sockIn.readLine();
+                if (!line.substring(0,3).equals("+OK"))
+                {
+                        status = "Can't get mail status!";
+                        return;
+                }
+            }
+            catch (IOException e)
+            {
+                status = "A POP3 error occurred: " + e;
+                return;
+            }
+
+            // Always close the socket.
+            //
+            finally
+            {
+                try { if (sock != null) sock.close(); }
+                catch (IOException e) {}  // any action necessary?
+            }
+
+            // Extract number of messages and total bytes.
+            //
+            int first = line.indexOf(" ");
+            int last = line.lastIndexOf(" ");
+            messages = comma_delimit(line.substring(first+1,last));
+            octets = comma_delimit(line.substring(last+1));
+        }
+
+        public String getStatus()
+        {
+        // Did all go well?
+        //
+                return status;
+        }
+
+        public String getMessageCount()
+        {
+        // Return number of messages as a
+        // comma-delimited string. It is
+        // of course unlikely that a user
+        // would have in excess of 999
+        // messages!
+        //
+                return messages;
+        }
+
+        public String getTotalBytes()
+        {
+        // Return total number of bytes as
+        // a comma-delimited string.
+        //
+                return octets;
+        }
+
+        private String comma_delimit(String s)
+        {
+        // Return a comma-delimited string from
+        // an integer, eg. 10000 -> 10,000
+        //
+        int len = s.length();
+
+                if (len <= 3)
+                        return s;
+                else
+                {
+                        String t = "";
+                        for (int n,i=len-1;i>=0;i--)
+                        {
+                                t = s.substring(i,i+1) + t;
+                                n = len-i;
+                                if (n % 3 == 0 && len > n) t = "," + t;
+                        }
+
+                        return t;
+                }
+        }
+}
+</pre>
+</body>
+</html>

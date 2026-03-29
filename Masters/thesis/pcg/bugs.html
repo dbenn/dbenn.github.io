@@ -1,0 +1,49 @@
+<HEAD>
+<TITLE>pCG Bug List</TITLE>
+</HEAD>
+
+<BODY>
+<H1>pCG Bug List</H1>
+<HR>
+<DL>
+
+<a name="bugs">
+<DT><H4>Bugs and limitations of the initial public release of pCG.</H4>   
+<DD>
+<UL>
+ <LI>Single and double quoted strings in concept referents are not
+     considered equivalent in exact graph matching, e.g. [Cat: "foo"]
+     is not the same as [Cat: 'foo']. The proposed ANSI CG standard
+     implies that they are not equivalent anyway, so this is arguably
+     not a bug.</LI>
+ <P>
+ <LI>A non-fatal Java VM JIT error sometimes occurs under Windows (tested
+     under Win98) using JDK 1.2.2.</LI>
+ <P>
+ <LI>Error messages need to be made more descriptive and less generic in
+     some cases, especially with respect to object operation invocation.</LI>
+ <P>
+ <LI>LF input is buggy, since Notio's example LF parser is being used and
+     is documented as being buggy.</LI>
+ <P>
+ <LI>Marker sets are not currently implemented.</LI>
+ <P>
+ <LI>The conformity relation is not currently implemented.</LI>
+ <P>
+ <LI>Implication of the form ~[u ~[v]] is not currently implemented.</LI>
+ <P>
+ <LI>Only a special form of negation is available in process preconditions.
+     See the included documentation.</LI>
+ <P>
+ <LI>pCG's attribute/operation and list indexing operators have precedence
+     problems in the current grammar, requiring combinations of them to be
+     parenthesised. See the included documentation.</LI>
+ <P>
+ <LI>If a pCG program does not end with a blank line, the interpreter
+     may yield a tokenstream error message.</LI>
+ <P>
+</UL>
+</DL>
+<HR>
+<A HREF="../../index.html"><IMG SRC=../../../icons/HomeBut.GIF></a>
+</BODY>

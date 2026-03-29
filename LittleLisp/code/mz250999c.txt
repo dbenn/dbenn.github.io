@@ -1,0 +1,97 @@
+Date: Sat, 25 Sep 1999 21:41 -0400
+From: Mark Zimmermann <z@his.com>
+To: Little Lisp <LittleLisp@onelist.com>
+X-Mailer: SimpleMail/3.2.5d1
+Mailing-List: list LittleLisp@onelist.com; contact LittleLisp-owner@onelist.com
+Delivered-To: mailing list LittleLisp@onelist.com
+List-Unsubscribe: <mailto:LittleLisp-unsubscribe@ONElist.com>
+Reply-to: LittleLisp@onelist.com
+Subject: [LittleLisp] LittleLisp code:  "triopartition.lisp" (uses pairpartition)
+X-Rcpt-To: <dbenn@camtech.net.au>
+X-DPOP: DPOP Version 2.5g
+
+From: Mark Zimmermann <z@his.com>
+
+;; partition integers into sums of three triangular numbers
+;; using pairpartition functions defined earlier
+;; ^z = Mark Zimmermann = z@his.com --- 19990320 & 0327
+;; LittleLisp tnx to David Benn!
+
+;; timing: (tp 10) in 5 sec; (tp 100) in 14 sec;
+;;    (tp 1000) in 70 sec; (tp 2000) in 115 sec.
+
+;; triopartition N by finding candidates for the largest
+;; triangular number in the partition --- it must be at least
+;; N/3 --- and then pairpartitioning the remainders that
+;; are left.  Note that pairpartions in that case must not
+;; use any numbers bigger than the associated candidate,
+;; to avoid redundant generation of partitions.
+;; clean up final answer to make it pretty
+(defun triopartition (N)
+  (let* ((candidates (gentricandidates (/ N 3) N))
+         (canpairs (genpairs N candidates)))
+    (cleanup (map pairpartition-car canpairs))))
+
+;; replace first element of a candidate pair (the remainder)
+;; with the possible pairpartitions for that number
+(defun pairpartition-car (pair)
+  (let* ((ppl (pairpartition (car pair) (car (cdr pair)))))
+    (cons ppl (cdr pair))))
+
+;; now clean up the answer in three steps:  kill NIL pairs,
+;; flatten the multilevel lists, and kill zeroes
+(defun killnilpairs (pairlist)
+  (cond ((null? pairlist) NIL)
+        ((null? (car (car pairlist)))
+                        (killnilpairs (cdr pairlist)))
+        (T (cons (car pairlist) (killnilpairs (cdr pairlist))))))
+
+;; flatten multilevel messes one at a time; do them all
+;; by mapping this function across the big list
+(defun flatten (mess)
+  (map 'append (car mess) (repeat (length (car mess))(cdr mess))))
+
+;; now do that function across the whole thing, applying 'append
+;; to join the answers together at top level if there are several,
+;; and just taking the car if there is only one answer
+(defun smash (l)
+  (let* ((x (map flatten l)))
+    (cond ((> (length x) 1) (apply 'append x))
+          (T (car x)))))
+
+;; kill any leading zeroes in any answer list
+(defun kill0s (l)
+  (cond ((= 0 (car l)) (kill0s (cdr l)))
+        (T l)))
+
+;; grand finale:  kill nil pairs, then smash flat, then kill 0s
+(defun cleanup (ans)
+  (map kill0s (smash (killnilpairs ans))))
+
+;; save typing triopartition ... say (tp 100) to partition
+;; 100 into triangles
+(defun tp (N)
+    (triopartition N))
+
+;; ^z
+
+
+
+
+
+
+
+
+
+Best,
+    ^z = Mark Zimmermann = z@his.com = http://www.his.com/~z/
+             ^zhurnal = http://www.his.com/~z/guestbook/
+
+--------------------------- ONElist Sponsor ----------------------------
+
+Share your special moments with family and friends- send PHOTO Greetings
+at Zing.com! Use your own photos or choose from a variety of funny,
+                 cute, cool and animated cards.       
+   <a href=" http://clickme.onelist.com/ad/zing13 ">Click Here</a>
+
+------------------------------------------------------------------------

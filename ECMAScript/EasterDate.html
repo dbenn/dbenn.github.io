@@ -1,0 +1,190 @@
+<html>
+ <head>
+  <title>Easter Date Calculation</title>
+  <script language = "JavaScript">
+  <!-- Hide the code from non-compliant browsers.
+  // Validate the year, calculate, and set results in form.
+  function easterDate(form) {
+    var year = form.year.value;
+    if (year >= 1583 && year <= 4099) {
+      result = easterDateCalc(year);
+      if (result.month == 3)
+            form.month.value = "March";
+      else
+            form.month.value = "April";
+      form.day.value = result.day; 
+    } else {
+      form.year.value = ""; 
+      form.month.value = ""; 
+      form.day.value = "";  
+    }
+  }
+
+  // Truncate an integer.
+  function trunc(num) {
+    if (num > 0)
+      return Math.floor(num);
+    else
+      return Math.ceil(num);
+  }
+
+  // EASTER DATE CALCULATION FOR YEARS 1583 TO 4099.
+  function easterDateCalc(y) {
+    /* 
+     * y is a 4 digit year 1583 to 4099
+     * d returns the day of the month of Easter
+     * m returns the month of Easter
+     *
+     * Easter Sunday is the Sunday following the Paschal Full Moon (PFM) date 
+     * for the year.
+     *
+     * This algorithm derives values by iterative and inter-dependent 
+     * processes, so ... DO NOT MODIFY THE ORDER OF CALCULATIONS!
+     *
+     * Boolean expressions are used in calculations: -1 if true, 0 if false
+     * \ means integer division (so, 1995 \ 100 = 19)
+     *
+     * Note: JavaScript does not support integer division, so the trunc()
+     * function has been used (see above). The use of -1 and 0 is peculiar
+     * to BASIC, so the conditional ?: operator has been used to convert
+     * true to -1 and false to 0. "||" is "Or", "&&" is "And", "%" is "Mod",
+     * "==" is "=" (equivalence vs assignment). The same variable names have
+     * been used as the original program for ease of comparison.
+     */
+
+   var a, b, c;              // intermediate results, all integers
+   var tA, tB, tC, tD, tE;   // table A - E results, all integers
+   var d, m;                 // results: day and month
+
+    // y must be 1583 to 4099
+    a = trunc(y / 100);
+    b = y % 19;
+
+    // calculate PFM date
+    c = trunc((a - 15) / 2) + (a > 26 ? -1 : 0) + (a > 38 ? -1 : 0) +
+        202 - 11 * b;
+
+    c = c + ((a == 21) || (a == 24) || (a == 25) ||
+             (a == 33) || (a == 36) || (a == 37) ? -1 : 0);
+
+    c = c % 30;
+    // table A result (21=M21 to 49=A18)
+    tA = c + (c == 29 ? -1 : 0) + (c == 28 && b > 10 ? -1 : 0) + 21;
+
+    // find the next Sunday
+    tB = (tA - 19) % 7; // table B result
+    c = (40 - a) % 4;
+    tC = c - (c > 1 ? -1 : 0) - (c == 3 ? -1 : 0); // table C result
+    c = y % 100;
+    tD = (c + trunc(c / 4)) % 7; // table D result
+    tE = ((20 - tB - tC - tD) % 7) + 1; // table E result
+
+    // return the date
+    d = tA + tE;
+    if (d > 31) {
+        d = d - 31;
+        m = 4;
+    } else {
+        m = 3;
+    }
+
+    return {month: m, day: d}; // object containing the results
+  }
+  // -->
+ </script>
+</head>
+
+<h3>Easter Date Calculation. Adapted from BASIC code found on 
+Ronald W. Mallen's <em><a href="http://www.assa.org.au/edm.html#Computer">Easter Dating Method</a></em> web page and written by Greg Mallen.
+To view the HTML and JavaScript source, see the View menu.</h3>
+<p>
+<h5>Tested successfully against:<br>
+<ul>
+ <li>Netscape version 4.07 for Linux and 4.5 for Windows 95 and Macintosh</li>
+ <li>Internet Explorer version 4.0 for Windows 95 and 4.01 for Macintosh</li>
+</ul>
+</h5>
+
+<hr>
+
+<form name="easterDateForm">
+ <p>
+  <table>
+   <tr>
+    <td>Day</td>
+    <td>Month</td>
+    <td>Year</td> 
+   </tr>
+   <tr>
+    <td><input type="text" name="day" value="" size=7></td>
+    <td><input type="text" name="month" value="" size=7></td>
+    <td><input type="text" name="year" value="" size=7></td>
+    <th align="left">Enter Year (1583 to 4099)</th>
+   </tr>
+   <tr>
+    <td align="right" colspan=3>
+     <input type="button" value="Calculate" 
+     onClick="easterDate(document.easterDateForm)">
+    </td>
+   </tr>
+  </table>
+  </p>
+</form>
+
+<h5>Here's the original code for comparison with the main JavaScript
+function <em>easterDateCalc()</em>:</h5>
+<pre>
+  Sub EasterDate (d, m, y)
+
+ ' EASTER DATE CALCULATION FOR YEARS 1583 TO 4099
+
+ ' y is a 4 digit year 1583 to 4099
+ ' d returns the day of the month of Easter
+ ' m returns the month of Easter
+
+ ' Easter Sunday is the Sunday following the Paschal Full Moon (PFM) date 
+ ' for the year
+
+ ' This algorithm derives values by iterative and inter-dependent processes, 
+ ' so ... DO NOT MODIFY THE ORDER OF CALCULATIONS!
+
+ ' Boolean expressions are used in calculations: -1 if true, 0 if false
+ ' \ means integer division (so, 1995 \ 100 = 19)
+
+   Dim a, b, c              ' intermediate results, all integers
+   Dim tA, tB, tC, tD, tE   ' table A - E results, all integers
+
+ ' y must be 1583 to 4099
+    a = y \ 100
+    b = y Mod 19
+
+ ' calculate PFM date
+    c = (a - 15) \ 2 + (a > 26) + (a > 38) + 202 - 11 * b
+    c = c + ((a = 21) Or (a = 24) Or (a = 25) Or (a = 33) Or (a = 36) Or (a = 37))
+    c = c Mod 30
+    tA = c + (c = 29) + (c = 28 And b > 10) + 21   ' table A result (21=M21 to 49=A18)
+
+ ' find the next Sunday
+    tB = (tA - 19) Mod 7                   ' table B result
+    c = (40 - a) Mod 4
+    tC = c - (c > 1) - (c = 3)             ' table C result
+    c = y Mod 100
+    tD = (c + c \ 4) Mod 7                 ' table D result
+    tE = ((20 - tB - tC - tD) Mod 7) + 1   ' table E result
+
+ ' return the date
+    d = tA + tE
+    If d > 31 Then
+        d = d - 31
+        m = 4
+    Else
+        m = 3
+    End If
+
+ End Sub
+</pre>
+<hr>
+<A HREF="../index.html"><IMG SRC="../icons/HomeBut.GIF"></a> 
+</body>
+</html>
+

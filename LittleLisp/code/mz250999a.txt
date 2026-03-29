@@ -1,0 +1,68 @@
+Date: Sat, 25 Sep 1999 21:40 -0400
+From: Mark Zimmermann <z@his.com>
+To: Little Lisp <LittleLisp@onelist.com>
+X-Mailer: SimpleMail/3.2.5d1
+Mailing-List: list LittleLisp@onelist.com; contact LittleLisp-owner@onelist.com
+Delivered-To: mailing list LittleLisp@onelist.com
+List-Unsubscribe: <mailto:LittleLisp-unsubscribe@ONElist.com>
+Reply-to: LittleLisp@onelist.com
+Subject: [LittleLisp] Intro/docs to "Triopartition.lisp" LL code in next msgs
+X-Rcpt-To: <dbenn@camtech.net.au>
+X-DPOP: DPOP Version 2.5g
+
+From: Mark Zimmermann <z@his.com>
+
+Hi David & Comrades!  I have been suffering from a horrible case of poison 
+ivy (weeding in my front yard on 12 Sep ... never saw what got me) --- but 
+the good news is that insomnia from itching has given me time from 1am to 
+4am several nights in a row now, and I've downloaded LL 1.0 beta and have 
+the online docs now --- which are superb (bravo, David!).
+
+In return, as previously promised (or threatened) the next two msgs I'm 
+posting (if SimpleMail serves on this eMate) will be the two parts of the 
+sophisticated (more or less) LittleLisp program to  partition positive 
+integers into triangular numbers.
+
+To run the following, take the source code from the next two posts and 
+copy/paste into Notes, in a folder of their own. Tell LL to Load both. 
+Then, Eval something like (tp 999) to see that 999 = 171+300+528 = 
+120+351+528 = 36+435+528 = 6+465+528 = 3+435+561 = 105+153+741 = 66+153+780 = 
+3+6+990  --- which takes a minute or so on the 25 MHz eMate 300, depending on 
+garbage collection and free memory.
+
+Quick refresher:  triangular numbers are integers like 1, 3, 6, 10, etc.; the 
+Nth triangular number is 1+2+3+...+N = N*(N+1)/2 --- and Gauss proved that any 
+positive integer can be written as a sum of three or fewer trianglular numbers 
+(possibly in several ways).  I haven't been able to figure out how to prove 
+that, so I wrote the LL "triopartition" to gather data and seek clues.  So 
+far, inspiration hasn't struck yet, but I'm still hoping!
+
+The triopartition code is fairly well-commented & readable (even to me, six 
+months later; I did it in LL 0.9 back in March 1999).  It's far far faster 
+than the previously-posted triangular number paritioner (which was slow like 
+N cubed).  Algorithm, in brief, takes the target number N and tries in turn 
+to partition N-M into pairs of triangular numbers, for all triangular M 
+between N/3 and N inclusive.  (The largest of the three partitioning
+triangles must be at least N/3, eh?!)  That recursive approach cuts down the 
+search space tremendously compared to the naive method of triple-looping  
+over all candidates.
+
+However, I haven't worked out the asymptotic behavior of the algorithm; it 
+may still be N cubed but with a smaller multiplier (and more overhead for 
+small numbers).  If anybody does some timing tests and can tell me how it 
+goes on her/his machine, I'd greatly appreciate it!  I also, of course, 
+welcome bug reports (and fixes!) as well as suggestions for improvements.
+
+
+Best,
+    ^z = Mark Zimmermann = z@his.com = http://www.his.com/~z/
+             ^zhurnal = http://www.his.com/~z/guestbook/
+
+--------------------------- ONElist Sponsor ----------------------------
+
+Share your special moments with family and friends- send PHOTO Greetings
+at Zing.com! Use your own photos or choose from a variety of funny,
+                 cute, cool and animated cards.       
+   <a href=" http://clickme.onelist.com/ad/zing13 ">Click Here</a>
+
+------------------------------------------------------------------------

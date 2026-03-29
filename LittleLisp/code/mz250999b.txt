@@ -1,0 +1,100 @@
+Date: Sat, 25 Sep 1999 21:40 -0400
+From: Mark Zimmermann <z@his.com>
+To: Little Lisp <LittleLisp@onelist.com>
+X-Mailer: SimpleMail/3.2.5d1
+Mailing-List: list LittleLisp@onelist.com; contact LittleLisp-owner@onelist.com
+Delivered-To: mailing list LittleLisp@onelist.com
+List-Unsubscribe: <mailto:LittleLisp-unsubscribe@ONElist.com>
+Reply-to: LittleLisp@onelist.com
+Subject: [LittleLisp] LittleLisp code:  "pairpartition.lisp"
+X-Rcpt-To: <dbenn@camtech.net.au>
+X-DPOP: DPOP Version 2.5g
+
+From: Mark Zimmermann <z@his.com>
+
+;; experiments in partitioning integers into sums of triangular
+;; numbers --- ^z --- 19990320
+;; LittleLisp thanks to David Benn!
+
+;; generate a list of numbers from A to B
+(defun seq2 (A B)
+  (let* ((D (+ (- B A) 1)))
+    (map '+ (repeat D A) (seq D))))
+
+;; generate a triangular number
+(defun triang (N)
+  (* 0.5 N (+ N 1)))
+
+;; invert the triang function
+(defun trianginverse (N)
+  (- (sqrt (+ (* 2 N) 0.25)) 0.5))
+
+;; make a list of triangular numbers from TMIN to TMAX
+(defun gentrilist (TMIN TMAX)
+  (map triang (seq2 TMIN TMAX)))
+
+;; produce a list of candidate triangular numbers from N
+;; up through MAX
+(defun gentricandidates (N MAX)
+  (let* ((trimin (#ceiling (trianginverse N)))
+         (trimax (#floor (trianginverse MAX))))
+    (gentrilist trimin trimax)))
+
+;; make a pair (REM B) from B and N, where
+;; REM = N-B
+(defun makepair (N B)
+  (list (- N B) B))
+
+;; generate a list of (REM B) pairs from target N and a list
+;; of candidates; return NIL if no possibilities
+(defun genpairs (N canlist)
+  (cond ((null? canlist) NIL)
+        (T (map makepair (repeat (length canlist) N) canlist))))
+
+;; test a pair (REM CANDIDATE) to see if REM is a triangle
+;; and return the pair, or NIL, depending
+(defun triangtest (L)
+  (let* ((x (trianginverse (car L))))
+    (cond ((= x (#floor x)) L)
+          (T NIL))))
+
+;; filter out pairs from a list of (REM CANDIDATE) pairs
+;; removing things that don't begin with a trianglular number
+;; leave terms beginning with 0; replace failures with NIL
+(defun filterpairs (pairlist)
+  (cond ((null? pairlist) NIL)
+        (T (map triangtest pairlist))))
+
+;; eat NILs from a list
+(defun eatnils (L)
+  (cond ((null? L) NIL)
+        ((null? (car L)) (eatnils (cdr L)))
+        (T (cons (car L) (eatnils (cdr L))))))
+
+;; partition N into pairs of triangular numbers with
+;; no member of the pair bigger than MAX ... making
+;; use of the fact that at least one member must be
+;; half or more as large as N ... to avoid trouble, also
+;; make sure that no member of the pair is bigger than N
+(defun pairpartition (N MAX)
+  (let* ((M (#min N MAX))
+         (candidates (gentricandidates (/ N 2) M))
+         (canpairs (genpairs N candidates)))
+    (eatnils (filterpairs canpairs))))
+
+
+;; ^z
+
+
+Best,
+    ^z = Mark Zimmermann = z@his.com = http://www.his.com/~z/
+             ^zhurnal = http://www.his.com/~z/guestbook/
+
+--------------------------- ONElist Sponsor ----------------------------
+
+Share your special moments with family and friends- send PHOTO Greetings
+at Zing.com! Use your own photos or choose from a variety of funny,
+                 cute, cool and animated cards.       
+   <a href=" http://clickme.onelist.com/ad/zing13 ">Click Here</a>
+
+------------------------------------------------------------------------

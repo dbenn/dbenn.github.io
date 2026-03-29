@@ -1,0 +1,105 @@
+<html>
+ <head>
+ <title>Dew Heater Calculations</title>
+  <script language = "JavaScript">
+   <!-- Hide the code from non-compliant browsers.
+   function dewCalcs(form) {
+     var volts = form.volts.value;
+     form.total_ohms.value=((volts*volts)/form.watts.value);
+     form.resistors.value=form.total_ohms.value/form.ohms.value;
+     form.amps.value=form.watts.value/volts;
+     form.battery_life.value=form.amps_per_hr.value/form.amps.value;   
+   }
+   // -->
+  </script>
+ </head>
+ <body>
+ <h5>Dew Heater Calculations</h5>
+ <P>
+ <h5>To make a heated dew shield using resistors</h5>
+ <P>
+ <h5>The best type of resister is 1/2 to 1 watt, using 12 volts DC</h5>
+ <P>
+ <h5>3 watts suitable for eyepiece & finder, 5 watts for mirror.</h5>
+ <P>
+ <form name="dewForm">
+  <table>
+   <tr><th align="left">Inputs</th></tr>
+   <tr>
+   <td>
+   Volts:
+    <input type="text" name="volts" value="12" size=7>
+   Watts required:
+    <input type="text" name="watts" value="3" size=7>
+   Resistor to be used (ohms):
+    <input type="text" name="ohms" value="15" size=7>
+   Battery amps per hr:
+    <input type="text" name="amps_per_hr" value="1" size=7>
+   </td></tr>
+   <tr><td>
+   <input type="button" value="Calculate" onClick="dewCalcs(document.dewForm)">
+   </td></tr>
+   <tr><th align="left">Outputs</th></tr>
+   <tr>
+    <td>Total resistance (ohms):</td>
+    <td><input type="text" name="total_ohms" value="" size=7></td>
+   </tr>
+   <tr>
+    <td>No. of resistors required:</td> 
+    <td><input type="text" name="resistors" value="" size=7></td>
+   </tr>
+   <tr>
+    <td>Amps drawn (eg .25 gives 4 hrs on 1 amp hr battery):</td>
+    <td><input type="text" name="amps" value="" size=7></td>
+   </tr>
+   <tr>
+    <td>Battery life (hours):</td>
+    <td><input type="text" name="battery_life" value="" size=7></td>
+   </tr>
+  </table>
+ </form>
+ <P>
+ <h5>Translated by <a href="mailto:dbenn@camtech.net.au">David Benn</a> to
+     ECMAScript from BASIC code supplied by Justin Tilbrook.</h5>
+ <pre>
+4 KEY OFF
+5 LOCATE 25,5
+10 PRINT DATE$,TIME$
+15 REM
+20 REM
+21 REM
+25 PRINT"                       Dew Heater programme."
+26 PRINT
+30 PRINT"    To make a heated dew shield using resistors"
+31 PRINT
+32 PRINT"    The best type of resister is 1/2 to 1 watt, using 12 volts DC"
+33 PRINT
+34 PRINT"    3 watts suitable for eyepiece & finder, 5 watts for mirror."
+35 PRINT "To quit type (2) in volts"
+36 PRINT
+40 INPUT "Volts ie (12 volt)";A
+45 IF A=1 THEN END
+46 IF A=2 THEN CHAIN "scofix",5
+47 INPUT "Watts required ie (3 watts)";B
+48 INPUT "Resister ohms ie (15)";D
+49 INPUT "Battery amps per hr ie (1 amp per hr)";L
+50 C=((A*A)/B)
+51 E=C/D
+52 F=B/A
+53 G=L/F
+59 REM
+150 PRINT C;"= Total ohms"
+151 PRINT
+152 PRINT E;" No. of resisters required"
+153 PRINT
+154 PRINT F;"is the amps drawn, ie(.25  gives you 4 hrs on 1amp hr battery)"
+155 PRINT
+156 PRINT G;" is battery life in hours."
+160 GOTO 35
+201 END
+ </pre>
+ </body>
+</html>
+
+
+
